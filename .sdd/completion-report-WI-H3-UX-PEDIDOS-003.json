@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 6,
+  "workItemCode": "WI-H3-UX-PEDIDOS-003",
+  "summary": "Pantalla /pedidos/:id (OrderDetailComponent) en la feature orders por capas: carga del pedido con sus estados (cargando, vacío, error, sin permiso, 400/401/403/404), botones Confirmar / Enviar / Marcar como entregado / Cancelar pedido habilitados según Estado, diálogos «Enviar pedido» y «Cancelar pedido» con validación, y avisos por código en las cuatro acciones. Añade al dominio los errores 404/409 y los detalles del 400, el puerto, cinco casos de uso, el repositorio HTTP y la ruta :id (después de nuevo).",
+  "criteria": [
+    { "id": "AC-15", "status": "covered", "note": "order-detail.component.spec.ts «AC-15»: pide GET por id y enseña Número, Cliente, Fecha, Importe y Estado; botones por estado en «botones según el Estado»." },
+    { "id": "AC-16", "status": "covered", "note": "Prueba «AC-16»: «Cargando…» mientras espera." },
+    { "id": "AC-17", "status": "covered", "note": "Prueba «AC-17»: respuesta sin id muestra «No hay datos que mostrar.»" },
+    { "id": "AC-18", "status": "covered", "note": "Prueba «AC-18»: fallo genérico muestra el aviso y Reintentar vuelve a pedir." },
+    { "id": "AC-19", "status": "covered", "note": "Prueba «AC-19»: si el token declara permisos y falta pedidos.consultar, «No tienes permiso para ver esto.» sin llamar a la API." },
+    { "id": "AC-20", "status": "covered", "note": "Carga con 400 → «Revisa los datos marcados.» (it.each AC-20..23)." },
+    { "id": "AC-21", "status": "covered", "note": "Carga con 401 → «Tu sesión terminó: vuelve a entrar.» con enlace Entrar." },
+    { "id": "AC-22", "status": "covered", "note": "Carga con 403 de la API → «No tienes permiso para hacer esto.» (ver deviations: el AC-19 usa «ver esto» para la falta de permiso en sesión)." },
+    { "id": "AC-23", "status": "covered", "note": "Carga con 404 → «No se encontró lo que buscas.»" },
+    { "id": "AC-30", "status": "covered", "note": "Diálogo Enviar: llama a ship con {carrier, shippingDate} y a ninguna otra; cierra, recarga y avisa «Pedido enviado.»" },
+    { "id": "AC-31", "status": "covered", "note": "Enviar con 400: conserva lo escrito, marca el campo con el mensaje del servidor (details) y avisa «Revisa los datos marcados.»" },
+    { "id": "AC-32", "status": "covered", "note": "Enviar con 401: aviso de sesión + Entrar." },
+    { "id": "AC-33", "status": "covered", "note": "Enviar con 403: «No tienes permiso para hacer esto.»" },
+    { "id": "AC-34", "status": "covered", "note": "Enviar con 404: «No se encontró lo que buscas.»" },
+    { "id": "AC-35", "status": "covered", "note": "Enviar con 409: recarga el pedido y avisa «Este pedido ya no se puede enviar.»" },
+    { "id": "AC-36", "status": "covered", "note": "Diálogo Cancelar: llama a cancel con {cancellationReason}; cierra, recarga y avisa «Pedido cancelado.»" },
+    { "id": "AC-37", "status": "covered", "note": "Cancelar con 400: conserva lo escrito, marca el campo con el mensaje del servidor y avisa." },
+    { "id": "AC-38", "status": "covered", "note": "Cancelar con 401." },
+    { "id": "AC-39", "status": "covered", "note": "Cancelar con 403." },
+    { "id": "AC-40", "status": "covered", "note": "Cancelar con 404." },
+    { "id": "AC-41", "status": "covered", "note": "Cancelar con 409: recarga y avisa «Este pedido ya no se puede cancelar.»" },
+    { "id": "AC-42", "status": "covered", "note": "Confirmar: llama a confirm con el id, recarga y avisa «Pedido confirmado.»" },
+    { "id": "AC-43", "status": "covered", "note": "Confirmar con 400." },
+    { "id": "AC-44", "status": "covered", "note": "Confirmar con 401 (con enlace Entrar)." },
+    { "id": "AC-45", "status": "covered", "note": "Confirmar con 403." },
+    { "id": "AC-46", "status": "covered", "note": "Confirmar con 404." },
+    { "id": "AC-47", "status": "covered", "note": "Confirmar con 409: recarga y avisa «Este pedido ya no se puede confirmar.»" },
+    { "id": "AC-48", "status": "covered", "note": "Marcar como entregado: llama a deliver, recarga y avisa «Pedido entregado.»" },
+    { "id": "AC-49", "status": "covered", "note": "Entregar con 400." },
+    { "id": "AC-50", "status": "covered", "note": "Entregar con 401." },
+    { "id": "AC-51", "status": "covered", "note": "Entregar con 403." },
+    { "id": "AC-52", "status": "covered", "note": "Entregar con 404." },
+    { "id": "AC-53", "status": "covered", "note": "Entregar con 409: recarga y avisa «Este pedido ya no se puede entregar.»" }
+  ],
+  "requirements": [
+    { "id": "R4-ARQ-1", "status": "no_aplica", "evidencia": "Idempotency-Key es de «Crear pedido» (WI-002); esta pantalla no crea." },
+    { "id": "R4-ARQ-2", "status": "cumple", "evidencia": "order-detail.component.ts (DESDE, can()) · order-detail.component.spec.ts «botones según el Estado»" },
+    { "id": "R4-ARQ-3", "status": "cumple", "evidencia": "http-order.repository.ts: solo HttpClient contra /api" },
+    { "id": "R4-ARQ-4", "status": "cumple", "evidencia": "El frontend no accede a base de datos" },
+    { "id": "R4-ARQ-5", "status": "cumple", "evidencia": "Campos y códigos tomados del contrato de GREEN-H3-API-ORDERS-001 (§2); no se cambió la forma de /api" },
+    { "id": "R4-ARQ-6", "status": "cumple", "evidencia": "order-detail.component.ts: las transiciones las decide el servidor (409); el botón solo se desactiva por Estado" },
+    { "id": "R4-ARQ-7", "status": "cumple", "evidencia": "El frontend no calcula reglas de negocio" },
+    { "id": "R4-ARQ-8", "status": "cumple", "evidencia": "El estado no se guarda en local: tras cada acción se recarga GET /api/orders/:id (load(true))" },
+    { "id": "R4-ARQ-9", "status": "cumple", "evidencia": "Sin cachés: cada entrada y cada acción vuelve a pedir al servidor" },
+    { "id": "R4-PRUEBAS-1", "status": "no_aplica", "evidencia": "Pantalla /pedidos: otro work item" },
+    { "id": "R4-PRUEBAS-2", "status": "no_aplica", "evidencia": "GET /api/customers: otro work item" },
+    { "id": "R4-PRUEBAS-3", "status": "no_aplica", "evidencia": "GET /api/orders: otro work item" },
+    { "id": "R4-PRUEBAS-4", "status": "no_aplica", "evidencia": "/pedidos/nuevo: otro work item" },
+    { "id": "R4-PRUEBAS-5", "status": "no_aplica", "evidencia": "GET /api/customers: otro work item" },
+    { "id": "R4-PRUEBAS-6", "status": "no_aplica", "evidencia": "POST /api/orders: otro work item" },
+    { "id": "R4-PRUEBAS-7", "status": "cumple", "evidencia": "order-detail.component.spec.ts «estados de la pantalla» y obligatorios de ambos diálogos" },
+    { "id": "R4-PRUEBAS-8", "status": "cumple", "evidencia": "order-detail.component.spec.ts «diálogo Enviar pedido» · http-order-detail.repository.spec.ts (it.each de códigos)" },
+    { "id": "R4-PRUEBAS-9", "status": "cumple", "evidencia": "order-detail.component.spec.ts «diálogo Cancelar pedido» · http-order-detail.repository.spec.ts" },
+    { "id": "R4-PRUEBAS-10", "status": "cumple", "evidencia": "http-order-detail.repository.spec.ts (200, 400, 401, 403, 404) y order-detail.component.spec.ts" },
+    { "id": "R4-PRUEBAS-11", "status": "cumple", "evidencia": "order-detail.component.spec.ts «Confirmar»" },
+    { "id": "R4-PRUEBAS-12", "status": "cumple", "evidencia": "order-detail.component.spec.ts «Marcar como entregado»" },
+    { "id": "R4-PRUEBAS-13", "status": "cumple", "evidencia": "AC-15..23 y 30..53 cubiertos uno a uno en order-detail.component.spec.ts" },
+    { "id": "R4-PRUEBAS-14", "status": "cumple", "evidencia": "http-order-detail.repository.spec.ts: caso feliz y cada código en las 5 operaciones" },
+    { "id": "R4-PRUEBAS-15", "status": "cumple", "evidencia": "order-detail.component.spec.ts: cargando, vacío, error, sin permiso y con datos" },
+    { "id": "R4-PRUEBAS-16", "status": "cumple", "evidencia": "node comprobar.js: install, test, build y arranque en verde" },
+    { "id": "R4-SEG-1", "status": "cumple", "evidencia": "Sin secretos en el código ni en las pruebas (el token de prueba solo lleva claims de permisos)" },
+    { "id": "R4-SEG-2", "status": "no_aplica", "evidencia": "Es de la API (backend); la ruta /pedidos va con authGuard desde app.routes.ts" },
+    { "id": "R4-SEG-3", "status": "no_aplica", "evidencia": "Regla de backend; R4-SEG-6/7 la excluyen de esta funcionalidad" },
+    { "id": "R4-SEG-4", "status": "no_aplica", "evidencia": "Validación en servidor: backend. El frontend valida los obligatorios y pinta los details del 400" },
+    { "id": "R4-SEG-5", "status": "cumple", "evidencia": "El componente no escribe en logs" },
+    { "id": "R4-SEG-6", "status": "cumple", "evidencia": "order-detail.component.ts: no filtra por usuario; ofrece las acciones según pedidos.gestionar de la sesión y 403 si la API lo dice" },
+    { "id": "R4-SEG-7", "status": "cumple", "evidencia": "Ídem R4-SEG-6" },
+    { "id": "R4-SEG-8", "status": "cumple", "evidencia": "order-detail.component.spec.ts «AC-19»" },
+    { "id": "R4-SEG-9", "status": "cumple", "evidencia": "order-detail.component.spec.ts: 401 en carga y en las cuatro acciones dice «Tu sesión terminó: vuelve a entrar.»" },
+    { "id": "R4-SEG-10", "status": "no_aplica", "evidencia": "«Importe» mínimo 0.01 es de /pedidos/nuevo" },
+    { "id": "R4-REND-1", "status": "cumple", "evidencia": "Ídem R4-ARQ-8" },
+    { "id": "R4-REND-2", "status": "cumple", "evidencia": "Ídem R4-ARQ-9" },
+    { "id": "R4-OBS-1", "status": "cumple", "evidencia": "Sin logs de datos personales ni tokens" }
+  ],
+  "testsRun": [
+    { "name": "frontend/src/app/feature/orders/ui/order-detail/order-detail.component.spec.ts", "result": "pass" },
+    { "name": "frontend/src/app/feature/orders/infrastructure/http-order-detail.repository.spec.ts", "result": "pass" },
+    { "name": "frontend/src/app/feature/orders/application/order-detail.use-cases.spec.ts", "result": "pass" },
+    { "name": "frontend/src/app/feature/orders/orders.routes.spec.ts", "result": "pass" },
+    { "name": "suite completa del frontend (npm test, vía node comprobar.js)", "result": "pass" }
+  ],
+  "deviations": [
+    {
+      "description": "Un 403 de la API al cargar el pedido muestra «No tienes permiso para hacer esto.» (AC-22); la falta de pedidos.consultar en la sesión muestra «No tienes permiso para ver esto.» (AC-19).",
+      "reason": "AC-19 y AC-22 describen avisos distintos para la pantalla y la spec no dice cuál va con el 403 de la carga; se asignó cada texto a su disparador literal.",
+      "respondeA": "spec"
+    },
+    {
+      "description": "Con 409 en «Enviar pedido» o «Cancelar pedido» el diálogo se cierra, además de recargar y avisar.",
+      "reason": "§2 no dice qué pasa con el diálogo en el 409; tras recargar, la acción ya no es pulsable y dejarlo abierto no tendría sentido.",
+      "respondeA": "spec"
+    },
+    {
+      "description": "«Tras Enviar/Cancelar pedido, va a /pedidos/:id» se cumple recargando el pedido en la propia ruta, sin navegar.",
+      "reason": "La pantalla ya está en /pedidos/:id; recargar «Cargar el elemento» deja el mismo resultado sin una navegación redundante.",
+      "respondeA": "spec"
+    },
+    {
+      "description": "Los mensajes por campo del 400 se leen de `details` aceptando {field|path|property, message|reason}.",
+      "reason": "El contrato dice «details: array, uno por dato» sin fijar su forma.",
+      "respondeA": "spec"
+    }
+  ],
+  "dodSelfAssessment": {
+    "met": true,
+    "blockers": []
+  },
+  "evidence": [
+    { "type": "coverage_report", "ref": ".sdd/evidence/WI-H3-UX-PEDIDOS-003/coverage-summary.json", "note": "Reporte de cobertura ≥80%: total 98.81 % de sentencias; ficheros tocados del work item entre 97 % y 100 %. Salida de npm test --coverage ejecutado por node comprobar.js." }
+  ],
+  "clarificationRequests": [
+    { "question": "¿Qué texto muestra la pantalla ante un 403 de GET /api/orders/:id: el de AC-19 o el de AC-22?", "blocking": false, "context": "§2 trae «ver esto» (AC-19) y «hacer esto» (AC-22) sin decir cuál va con el 403 de la carga." },
+    { "question": "¿Forma exacta de `details` en un 400?", "blocking": false, "context": "§2 contratos: «array, uno por dato» sin campos." }
+  ],
+  "usoDelPack": {
+    "usadas": ["§1", "§2", "§4", "§7", "§8", "§11"],
+    "noSirvieron": ["§4 R4-PRUEBAS-1..6 y R4-ARQ-1 (son de otras pantallas)", "§4-bis (sin reglas nuevas para este work item)"],
+    "falto": [
+      { "que": "Forma de `details` del 400 y texto del 403 de la carga", "dondeLoEncontro": "Lo decidí yo; ver clarificationRequests" },
+      { "que": "Cómo es el repo ya existente (feature orders, NoticeService, permissions, patrón del detalle de clientes)", "dondeLoEncontro": "Código del repo: orders/ y clients/customer-detail" }
+    ]
+  }
+}

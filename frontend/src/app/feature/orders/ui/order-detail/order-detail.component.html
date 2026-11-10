@@ -1,0 +1,169 @@
+<section class="detalle">
+  @switch (state()) {
+    @case ('loading') {
+      <p role="status">Cargando…</p>
+    }
+    @case ('empty') {
+      <p role="status">No hay datos que mostrar.</p>
+    }
+    @case ('error') {
+      <p role="alert">
+        No se pudo cargar. Vuelve a intentarlo.
+        <button type="button" class="boton" (click)="load()">Reintentar</button>
+      </p>
+    }
+    @case ('noaccess') {
+      <p role="alert">No tienes permiso para ver esto.</p>
+    }
+    @case ('forbidden') {
+      <p role="alert">No tienes permiso para hacer esto.</p>
+    }
+    @case ('invalid') {
+      <p role="alert">Revisa los datos marcados.</p>
+    }
+    @case ('notfound') {
+      <p role="alert">No se encontró lo que buscas.</p>
+    }
+    @case ('session') {
+      <p role="alert">
+        Tu sesión terminó: vuelve a entrar.
+        <a class="boton" [href]="loginHref">Entrar</a>
+      </p>
+    }
+    @case ('data') {
+      <header class="detalle__cabecera">
+        <h1>Detalle del pedido</h1>
+        @if (canManage) {
+          <div class="detalle__acciones">
+            <button type="button" class="boton boton--primario" [disabled]="!can('confirm') || busy() === 'confirm'" (click)="confirm()">
+              <span aria-hidden="true">✓</span> {{ busy() === 'confirm' ? 'Enviando…' : 'Confirmar' }}
+            </button>
+            <button type="button" class="boton boton--primario" [disabled]="!can('ship')" (click)="openDialog('ship')">
+              <span aria-hidden="true">➤</span> Enviar
+            </button>
+            <button type="button" class="boton boton--primario" [disabled]="!can('deliver') || busy() === 'deliver'" (click)="deliver()">
+              <span aria-hidden="true">✓</span> {{ busy() === 'deliver' ? 'Enviando…' : 'Marcar como entregado' }}
+            </button>
+            <button type="button" class="boton" [disabled]="!can('cancel')" (click)="openDialog('cancel')">
+              <span aria-hidden="true">✕</span> Cancelar pedido
+            </button>
+          </div>
+        }
+      </header>
+
+      @if (aviso(); as fallo) {
+        @if (!dialog()) {
+          <p role="alert" class="detalle__aviso">
+            {{ fallo.texto }}
+            @if (fallo.sesion) {
+              <a class="boton" [href]="loginHref">Entrar</a>
+            } @else if (fallo.texto === 'No se pudo cargar. Vuelve a intentarlo.') {
+              <button type="button" class="boton" [disabled]="!!busy()" (click)="retry()">Reintentar</button>
+            }
+          </p>
+        }
+      }
+
+      <fieldset class="detalle__grupo">
+        <legend>Datos del pedido</legend>
+        <dl class="detalle__datos">
+          <div><dt>Número</dt><dd>{{ order()?.number }}</dd></div>
+          <div><dt>Cliente</dt><dd>{{ order()?.customerName }}</dd></div>
+          <div><dt>Fecha</dt><dd>{{ order()?.date }}</dd></div>
+          <div><dt>Importe</dt><dd>{{ order()?.amount | number: '1.2-2' }}</dd></div>
+          <div><dt>Estado</dt><dd>{{ statusLabel() }}</dd></div>
+        </dl>
+      </fieldset>
+    }
+  }
+
+  @if (dialog() === 'ship') {
+    <div class="dialogo" role="dialog" aria-modal="true" aria-labelledby="dialogo-titulo">
+      <h2 id="dialogo-titulo">Enviar pedido</h2>
+      <form [formGroup]="shipForm" (ngSubmit)="submitShip()" novalidate>
+        <div class="campo">
+          <label for="carrier">Transportista</label>
+          <input
+            id="carrier"
+            type="text"
+            formControlName="carrier"
+            aria-required="true"
+            [attr.aria-invalid]="fieldError('carrier') ? 'true' : null"
+            [attr.aria-describedby]="fieldError('carrier') ? 'carrier-error' : null"
+          />
+          @if (fieldError('carrier'); as mensaje) {
+            <p class="campo__error" id="carrier-error">{{ mensaje }}</p>
+          }
+        </div>
+        <div class="campo">
+          <label for="shippingDate">Fecha de envío</label>
+          <input
+            id="shippingDate"
+            type="date"
+            formControlName="shippingDate"
+            aria-required="true"
+            [attr.aria-invalid]="fieldError('shippingDate') ? 'true' : null"
+            [attr.aria-describedby]="fieldError('shippingDate') ? 'shippingDate-error' : null"
+          />
+          @if (fieldError('shippingDate'); as mensaje) {
+            <p class="campo__error" id="shippingDate-error">{{ mensaje }}</p>
+          }
+        </div>
+        @if (aviso(); as fallo) {
+          <p role="alert">
+            {{ fallo.texto }}
+            @if (fallo.sesion) {
+              <a class="boton" [href]="loginHref">Entrar</a>
+            } @else {
+              <button type="button" class="boton" [disabled]="!!busy()" (click)="retry()">Reintentar</button>
+            }
+          </p>
+        }
+        <footer class="dialogo__pie">
+          <button type="button" class="boton" (click)="closeDialog()">Cancelar</button>
+          <button type="submit" class="boton boton--primario" [disabled]="busy() === 'ship'">
+            {{ busy() === 'ship' ? 'Enviando…' : 'Enviar pedido' }}
+          </button>
+        </footer>
+      </form>
+    </div>
+  }
+
+  @if (dialog() === 'cancel') {
+    <div class="dialogo" role="dialog" aria-modal="true" aria-labelledby="dialogo-titulo">
+      <h2 id="dialogo-titulo">Cancelar pedido</h2>
+      <form [formGroup]="cancelForm" (ngSubmit)="submitCancel()" novalidate>
+        <div class="campo">
+          <label for="cancellationReason">Motivo</label>
+          <textarea
+            id="cancellationReason"
+            rows="3"
+            formControlName="cancellationReason"
+            aria-required="true"
+            [attr.aria-invalid]="fieldError('cancellationReason') ? 'true' : null"
+            [attr.aria-describedby]="fieldError('cancellationReason') ? 'cancellationReason-error' : null"
+          ></textarea>
+          @if (fieldError('cancellationReason'); as mensaje) {
+            <p class="campo__error" id="cancellationReason-error">{{ mensaje }}</p>
+          }
+        </div>
+        @if (aviso(); as fallo) {
+          <p role="alert">
+            {{ fallo.texto }}
+            @if (fallo.sesion) {
+              <a class="boton" [href]="loginHref">Entrar</a>
+            } @else {
+              <button type="button" class="boton" [disabled]="!!busy()" (click)="retry()">Reintentar</button>
+            }
+          </p>
+        }
+        <footer class="dialogo__pie">
+          <button type="button" class="boton" (click)="closeDialog()">Volver</button>
+          <button type="submit" class="boton boton--peligro" [disabled]="busy() === 'cancel'">
+            {{ busy() === 'cancel' ? 'Enviando…' : 'Cancelar pedido' }}
+          </button>
+        </footer>
+      </form>
+    </div>
+  }
+</section>

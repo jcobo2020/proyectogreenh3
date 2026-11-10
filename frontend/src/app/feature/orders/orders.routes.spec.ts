@@ -4,7 +4,16 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { createSpyObj } from '../../../testing/spy-obj';
 import { routes } from '../../app.routes';
-import { CreateOrderUseCase, ListCustomerOptionsUseCase, ListOrdersUseCase } from './application/order.use-cases';
+import {
+  CancelOrderUseCase,
+  ConfirmOrderUseCase,
+  CreateOrderUseCase,
+  DeliverOrderUseCase,
+  GetOrderUseCase,
+  ListCustomerOptionsUseCase,
+  ListOrdersUseCase,
+  ShipOrderUseCase,
+} from './application/order.use-cases';
 import { ordersRoutes } from './orders.routes';
 
 describe('orders.routes', () => {
@@ -41,8 +50,33 @@ describe('orders.routes', () => {
     expect((harness.routeNativeElement as HTMLElement).querySelector('h1')?.textContent).toContain('Pedidos');
   });
 
-  it('la ruta literal «nuevo» existe y va a continuación de la lista', () => {
-    expect(ordersRoutes[0].children!.map((r) => r.path)).toEqual(['', 'nuevo']);
+  it('la ruta literal «nuevo» va antes que la paramétrica «:id»', () => {
+    expect(ordersRoutes[0].children!.map((r) => r.path)).toEqual(['', 'nuevo', ':id']);
+  });
+
+  it('/pedidos/:id pinta el detalle', async () => {
+    const get = createSpyObj<GetOrderUseCase>(['execute']);
+    get.execute.mockReturnValue(
+      of({ id: 'o1', number: 'P-1', customerId: 'c1', customerName: 'Ana', date: '2026-11-01', amount: 5, status: 'pending' }),
+    );
+    const rutas: Routes = [
+      {
+        path: 'pedidos',
+        providers: [
+          { provide: GetOrderUseCase, useValue: get },
+          { provide: ConfirmOrderUseCase, useValue: createSpyObj<ConfirmOrderUseCase>(['execute']) },
+          { provide: ShipOrderUseCase, useValue: createSpyObj<ShipOrderUseCase>(['execute']) },
+          { provide: CancelOrderUseCase, useValue: createSpyObj<CancelOrderUseCase>(['execute']) },
+          { provide: DeliverOrderUseCase, useValue: createSpyObj<DeliverOrderUseCase>(['execute']) },
+        ],
+        children: ordersRoutes[0].children!,
+      },
+    ];
+    TestBed.configureTestingModule({ providers: [provideRouter(rutas)] });
+    const harness = await RouterTestingHarness.create();
+    await harness.navigateByUrl('/pedidos/o1');
+    expect((harness.routeNativeElement as HTMLElement).querySelector('h1')?.textContent).toContain('Detalle del pedido');
+    expect(get.execute).toHaveBeenCalledWith('o1');
   });
 
   it('/pedidos/nuevo pinta el formulario', async () => {

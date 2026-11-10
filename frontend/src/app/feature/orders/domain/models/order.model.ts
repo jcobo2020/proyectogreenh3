@@ -1,3 +1,31 @@
+/** Respuesta 200 de GET /api/orders/:id. */
+export interface OrderDetail {
+  id: string;
+  number: string;
+  customerId: string;
+  customerName: string;
+  date: string;
+  amount: number;
+  status: string;
+}
+
+/** Cuerpo de POST /api/orders/:id/ship. */
+export interface ShipOrder {
+  carrier: string;
+  shippingDate: string;
+}
+
+/** Cuerpo de POST /api/orders/:id/cancel. */
+export interface CancelOrder {
+  cancellationReason: string;
+}
+
+/** Lo que devuelve una acción sobre el pedido; la pantalla recarga el elemento y no lo usa. */
+export interface OrderActionResult {
+  id: string;
+  status: string;
+}
+
 /** Fila de GET /api/orders. */
 export interface OrderListItem {
   id: string;
