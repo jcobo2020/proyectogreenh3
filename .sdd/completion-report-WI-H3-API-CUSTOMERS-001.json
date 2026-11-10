@@ -1,0 +1,85 @@
+{
+  "schemaVersion": 6,
+  "workItemCode": "WI-H3-API-CUSTOMERS-001",
+  "summary": "CRUD de /api/customers (GET lista paginada con $lookup, POST idempotente con Idempotency-Key en transacción, GET/PUT con ETag e If-Match, DELETE con comprobación IN_USE), modelos Customer e IdempotencyKey con sus índices, tests de contrato para los 31 AC y documentación Swagger.",
+  "criteria": [
+    { "id": "AC-01", "status": "covered", "note": "customers.test.ts GET: filtros, paginación y orden name/id con filas desordenadas" },
+    { "id": "AC-02", "status": "covered", "note": "401 sin token en GET lista" },
+    { "id": "AC-03", "status": "covered", "note": "400 con page, pageSize, status, provinceId y name inválidos" },
+    { "id": "AC-04", "status": "covered", "note": "400 con provinceId inexistente" },
+    { "id": "AC-05", "status": "covered", "note": "201 con datos, version 1 y ETag" },
+    { "id": "AC-06", "status": "covered", "note": "400 por datos, townId de otra provincia y falta de Idempotency-Key" },
+    { "id": "AC-07", "status": "covered", "note": "401 sin token" },
+    { "id": "AC-08", "status": "covered", "note": "409 con email repetido (normalizado a minúsculas)" },
+    { "id": "AC-09", "status": "covered", "note": "422 con misma clave y otro cuerpo; no crea" },
+    { "id": "AC-10", "status": "covered", "note": "400 provinceId inexistente" },
+    { "id": "AC-11", "status": "covered", "note": "400 townId inexistente" },
+    { "id": "AC-12", "status": "covered", "note": "repetición devuelve mismo cuerpo con Idempotent-Replayed: true; también 4xx guardado, aislamiento por usuario y clave caducada" },
+    { "id": "AC-13", "status": "covered", "note": "Promise.all de dos envíos: un solo cliente, una sola fila de clave, una respuesta con Idempotent-Replayed" },
+    { "id": "AC-14", "status": "covered", "note": "200 con versión incrementada y ETag" },
+    { "id": "AC-15", "status": "covered", "note": "400 por datos, id no uuid y townId de otra provincia" },
+    { "id": "AC-16", "status": "covered", "note": "401 sin token" },
+    { "id": "AC-17", "status": "covered", "note": "404" },
+    { "id": "AC-18", "status": "covered", "note": "409 con email de otro cliente" },
+    { "id": "AC-19", "status": "covered", "note": "412 con versión vieja, no se guarda; también con dos PUT simultáneos" },
+    { "id": "AC-20", "status": "covered", "note": "428 sin If-Match" },
+    { "id": "AC-21", "status": "covered", "note": "400 provinceId inexistente" },
+    { "id": "AC-22", "status": "covered", "note": "400 townId inexistente" },
+    { "id": "AC-23", "status": "covered", "note": "200 con provinceName, townName y ETag" },
+    { "id": "AC-24", "status": "covered", "note": "401" },
+    { "id": "AC-25", "status": "covered", "note": "404" },
+    { "id": "AC-26", "status": "covered", "note": "400 id no uuid" },
+    { "id": "AC-27", "status": "covered", "note": "204 y borrado físico" },
+    { "id": "AC-28", "status": "covered", "note": "401" },
+    { "id": "AC-29", "status": "covered", "note": "404" },
+    { "id": "AC-30", "status": "covered", "note": "Hoy nadie cita a Customer (el contrato lo dice), así que no hay FK real. Implementado con un registro de comprobaciones (registerCustomerReference); el test registra una y verifica el 409 IN_USE. Cuando otro contrato cite customerId deberá registrarse o usar su FK." },
+    { "id": "AC-31", "status": "covered", "note": "400 id no uuid" }
+  ],
+  "requirements": [
+    { "id": "R4-ARQ-1", "status": "no_aplica", "evidencia": "regla del frontend; este work item es solo backend" },
+    { "id": "R4-ARQ-2", "status": "no_aplica", "evidencia": "regla del frontend" },
+    { "id": "R4-ARQ-3", "status": "cumple", "evidencia": "api/src/controllers/CustomerController.ts · formas tomadas de la spec §2 sin cambios" },
+    { "id": "R4-ARQ-4", "status": "cumple", "evidencia": "api/src/services/CustomerService.ts · unicidad de email, referencias y versión decididas en el servidor" },
+    { "id": "R4-ARQ-5", "status": "no_aplica", "evidencia": "regla del frontend" },
+    { "id": "R4-ARQ-6", "status": "cumple", "evidencia": "api/src/models/customer.ts · estado solo en la base" },
+    { "id": "R4-ARQ-7", "status": "cumple", "evidencia": "api/src/services/CustomerService.ts listCustomers/findCustomerById sin caché · customers.test.ts" },
+    { "id": "R4-SEG-1", "status": "cumple", "evidencia": "api/.env.example sin valores; JWT_SECRET solo de entorno; los tests generan el secreto con randomBytes" },
+    { "id": "R4-SEG-2", "status": "cumple", "evidencia": "api/src/routes/api.routes.ts · authenticate en las 5 rutas · tests 401" },
+    { "id": "R4-SEG-3", "status": "cumple", "evidencia": "la spec no define permisos por usuario distintos de estar autenticado; la clave de idempotencia se aísla por usuario (customers.test.ts)" },
+    { "id": "R4-SEG-4", "status": "cumple", "evidencia": "api/src/validators/customerValidator.ts · tests 400" },
+    { "id": "R4-SEG-5", "status": "cumple", "evidencia": "el código nuevo no escribe logs con datos de clientes ni tokens; solo 'Esquema listo' en server.ts" },
+    { "id": "R4-REND-1", "status": "cumple", "evidencia": "igual que R4-ARQ-6" },
+    { "id": "R4-REND-2", "status": "cumple", "evidencia": "igual que R4-ARQ-7" },
+    { "id": "R4-OBS-1", "status": "cumple", "evidencia": "igual que R4-SEG-5" }
+  ],
+  "testsRun": [
+    { "name": "customers.test.ts", "result": "pass" },
+    { "name": "provinces.test.ts", "result": "pass" },
+    { "name": "towns.test.ts", "result": "pass" }
+  ],
+  "deviations": [],
+  "evidence": [
+    { "type": "test_results", "ref": ".sdd/evidence/WI-H3-API-CUSTOMERS-001/test-results.txt", "note": "Tests unitarios passing" },
+    { "type": "api_docs", "ref": "api/src/controllers/CustomerController.ts", "note": "Endpoints documentados en Swagger" },
+    { "type": "migration_log", "ref": ".sdd/evidence/WI-H3-API-CUSTOMERS-001/arranque.txt", "note": "Migración ejecutada exitosamente" },
+    { "type": "coverage_report", "ref": ".sdd/evidence/WI-H3-API-CUSTOMERS-001/coverage-summary.json", "note": "Reporte de cobertura ≥80%" }
+  ],
+  "dodSelfAssessment": {
+    "met": true,
+    "blockers": []
+  },
+  "clarificationRequests": [
+    { "question": "¿Qué hacer con un If-Match que no es una versión legible? Lo traté como 412.", "blocking": false, "context": "§2 PUT: solo declara 428 si falta y 412 si no coincide." },
+    { "question": "¿El filtro name es por contiene o por prefijo, y distingue mayúsculas? Implementé contiene, sin distinguir mayúsculas.", "blocking": false, "context": "§2 GET /api/customers: solo dice «filtradas por name»." },
+    { "question": "¿Cómo se prueba/implementa IN_USE si ningún contrato cita a Customer? Usé un registro de comprobaciones vacío.", "blocking": false, "context": "§2 DELETE y §4 dependencias: no existe aún la tabla que lo cite." },
+    { "question": "¿Qué usuario identifica la Idempotency-Key? Usé el claim sub del JWT; sin sub, 401 en POST.", "blocking": false, "context": "§2 POST dice «por usuario» pero §3/§4 no definen el token." }
+  ],
+  "usoDelPack": {
+    "usadas": ["§1", "§1-bis", "§2", "§3", "§4", "§7", "§8", "§11"],
+    "noSirvieron": ["§4-bis (LRN-e50bacb3 sobre botones de formularios, no aplica)", "R4-ARQ-1/2/5 (frontend)"],
+    "falto": [
+      { "que": "Cómo se identifica al usuario en el JWT (claim para userId de IdempotencyKey)", "dondeLoEncontro": "código existente: authenticate.middleware.ts y tests con sub" },
+      { "que": "Semántica del filtro name y de un If-Match mal formado", "dondeLoEncontro": "decisión propia" }
+    ]
+  }
+}

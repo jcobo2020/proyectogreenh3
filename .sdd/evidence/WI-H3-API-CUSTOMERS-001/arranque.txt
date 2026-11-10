@@ -1,0 +1,4 @@
+Salida real del arranque de la API compilada (node comprobar.js, MongoDB en memoria, puerto 4500):
+Esquema listo: Customer, IdempotencyKey
+API escuchando en el puerto 4500
+Rutas comprobadas: / → 200, /api-docs/ → 200
