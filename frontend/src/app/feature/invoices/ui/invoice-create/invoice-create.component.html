@@ -1,0 +1,102 @@
+<section class="alta">
+  <h1>Nueva factura</h1>
+
+  @if (loadingCustomers()) {
+    <p role="status">Cargando…</p>
+  }
+  @if (customersError(); as fallo) {
+    <p role="alert">
+      {{ fallo.texto }}
+      @if (fallo.sesion) {
+        <a class="boton" [href]="loginHref">Entrar</a>
+      } @else {
+        <button type="button" class="boton" (click)="retrySearch()">Reintentar</button>
+      }
+    </p>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <fieldset class="alta__grupo">
+      <legend>Datos de la factura</legend>
+
+      <div class="campo">
+        <label for="customerSearch">Cliente</label>
+        <input
+          id="customerSearch"
+          type="search"
+          autocomplete="off"
+          placeholder="Escribe 2 letras para buscar"
+          (input)="onSearch($event)"
+        />
+        <select
+          id="customerId"
+          formControlName="customerId"
+          aria-label="Resultados de Cliente"
+          aria-required="true"
+          [attr.aria-invalid]="fieldError('customerId') ? 'true' : null"
+          [attr.aria-describedby]="fieldError('customerId') ? 'customerId-error' : null"
+          (change)="onCustomerChange($event)"
+        >
+          <option value="">Selecciona…</option>
+          @for (customer of customers(); track customer.id) {
+            <option [value]="customer.id">{{ customer.name }}</option>
+          }
+        </select>
+        @if (fieldError('customerId'); as mensaje) {
+          <p class="campo__error" id="customerId-error">{{ mensaje }}</p>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="date">Fecha</label>
+        <input
+          id="date"
+          type="date"
+          formControlName="date"
+          [max]="today"
+          aria-required="true"
+          [attr.aria-invalid]="fieldError('date') ? 'true' : null"
+          [attr.aria-describedby]="fieldError('date') ? 'date-error' : null"
+        />
+        @if (fieldError('date'); as mensaje) {
+          <p class="campo__error" id="date-error">{{ mensaje }}</p>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="amount">Importe</label>
+        <input
+          id="amount"
+          type="number"
+          step="0.01"
+          inputmode="decimal"
+          formControlName="amount"
+          aria-required="true"
+          [attr.aria-invalid]="fieldError('amount') ? 'true' : null"
+          [attr.aria-describedby]="fieldError('amount') ? 'amount-error' : null"
+        />
+        @if (fieldError('amount'); as mensaje) {
+          <p class="campo__error" id="amount-error">{{ mensaje }}</p>
+        }
+      </div>
+    </fieldset>
+
+    @if (submitError(); as fallo) {
+      <p role="alert" class="alta__aviso">
+        {{ fallo.texto }}
+        @if (fallo.sesion) {
+          <a class="boton" [href]="loginHref">Entrar</a>
+        } @else {
+          <button type="button" class="boton" [disabled]="blocked" (click)="submit()">Reintentar</button>
+        }
+      </p>
+    }
+
+    <footer class="alta__pie">
+      <a class="boton" routerLink="/facturas">Cancelar</a>
+      <button type="submit" class="boton boton--primario" [disabled]="blocked">
+        {{ sending() ? 'Enviando…' : 'Crear factura' }}
+      </button>
+    </footer>
+  </form>
+</section>

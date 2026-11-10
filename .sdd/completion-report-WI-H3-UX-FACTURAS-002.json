@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 6,
+  "workItemCode": "WI-H3-UX-FACTURAS-002",
+  "summary": "Pantalla /facturas/nueva (feature invoices, por capas): Cliente con búsqueda al escribir (GET /api/customers?name= desde 2 letras, primera página), Fecha (máx. hoy) e Importe (mín. 0.01) con validación literal y accesible; POST /api/invoices con Idempotency-Key estable por intento; estados cargando, error con reintento, 400 y 401 en la carga y avisos 400/401/422 al crear; tras el éxito avisa «Factura creada.» y va a /facturas; Cancelar enlaza a /facturas. Incluye los tests de componente, repositorio, casos de uso y rutas.",
+  "criteria": [
+    { "id": "AC-07", "status": "covered", "note": "invoice-create.component.spec.ts: ofrece Cliente, Fecha e Importe, sin campo de número (lo asigna el servidor); envía {customerId,date,amount}." },
+    { "id": "AC-08", "status": "covered", "note": "invoice-create.component.spec.ts: «Cargando…» mientras espera la búsqueda de clientes y desaparece al llegar." },
+    { "id": "AC-09", "status": "covered", "note": "invoice-create.component.spec.ts: «No se pudo cargar. Vuelve a intentarlo.», reintento y «Crear factura» bloqueado mientras falle." },
+    { "id": "AC-10", "status": "covered", "note": "invoice-create.component.spec.ts: la carga con 400 dice «Revisa los datos marcados.»; http-repositories.spec.ts traduce el 400." },
+    { "id": "AC-11", "status": "covered", "note": "invoice-create.component.spec.ts: la carga con 401 dice «Tu sesión terminó: vuelve a entrar.» con enlace a entrar; interceptor de sesión probado." },
+    { "id": "AC-13", "status": "covered", "note": "invoice-create.component.spec.ts: tras el 201 avisa «Factura creada.» y navega a /facturas." },
+    { "id": "AC-14", "status": "covered", "note": "invoice-create.component.spec.ts: POST con 400 avisa «Revisa los datos marcados.», conserva lo escrito y no navega." },
+    { "id": "AC-15", "status": "covered", "note": "invoice-create.component.spec.ts: POST con 401 avisa «Tu sesión terminó: vuelve a entrar.» y ofrece entrar." },
+    { "id": "AC-16", "status": "covered", "note": "invoice-create.component.spec.ts: POST con 422 avisa «No se pudo por una regla del negocio.», conserva lo escrito." }
+  ],
+  "requirements": [
+    { "id": "R4-ARQ-1", "status": "cumple", "evidencia": "invoice-create.component.ts (submit, intento) · invoice-create.component.spec.ts «reintentar tras un fallo usa la misma Idempotency-Key…»" },
+    { "id": "R4-PRUEBAS-2", "status": "cumple", "evidencia": "http-repositories.spec.ts · GET /api/customers 200, 401, 400" },
+    { "id": "R4-PRUEBAS-4", "status": "cumple", "evidencia": "invoice-create.component.spec.ts · validación y accesibilidad, Cancelar enlaza a /facturas" },
+    { "id": "R4-PRUEBAS-5", "status": "cumple", "evidencia": "invoice-create.component.spec.ts · AC-09 reintento y bloqueo; http-repositories.spec.ts" },
+    { "id": "R4-PRUEBAS-6", "status": "cumple", "evidencia": "invoice-create.component.spec.ts · Crear factura (201, 400, 401, 422, fallo conserva lo escrito)" },
+    { "id": "R4-SEG-6", "status": "cumple", "evidencia": "invoice-create.component.ts avisoCarga/avisoEnvio con 401 · specs AC-11 y AC-15" },
+    { "id": "R4-SEG-7", "status": "cumple", "evidencia": "invoice-create.component.ts fieldError (fecha > hoy, importe < 0.01) · specs de Fecha futura e Importe mínimo; el servidor también valida (API de otro work item)" }
+  ],
+  "testsRun": [
+    { "name": "invoice-create.component.spec.ts", "result": "pass" },
+    { "name": "http-repositories.spec.ts", "result": "pass" },
+    { "name": "invoice.use-cases.spec.ts", "result": "pass" },
+    { "name": "invoices.routes.spec.ts", "result": "pass" }
+  ],
+  "deviations": [
+    {
+      "description": "No existe la ruta /facturas (lista): invoices.routes.ts solo declara 'nueva'. Tras crear o cancelar, la navegación a /facturas no tiene pantalla hasta que se entregue la lista (otro work item).",
+      "reason": "§10 excluye otras pantallas de la spec.",
+      "respondeA": "otra"
+    },
+    {
+      "description": "La rama del pack (feature/GREEN-H3-UX-FACTURAS-001/WP-H3-UX-FACTURAS-001) no existía; la creé desde la rama actual, que ya traía el código de los otros work items.",
+      "reason": "§Cabecera pide crearla si no existe.",
+      "respondeA": "otra"
+    }
+  ],
+  "dodSelfAssessment": { "met": true, "blockers": [] },
+  "clarificationRequests": [
+    {
+      "question": "¿Cómo debe enseñarse la búsqueda de «Cliente» (campo de texto + lista, combobox)? ¿Hay debounce?",
+      "blocking": false,
+      "context": "§2 dice «busca mientras se escribe… desde 2 letras» pero no el componente: usé un input de búsqueda y un select con los resultados, sin debounce (cada pulsación cancela la anterior)."
+    }
+  ],
+  "usoDelPack": {
+    "usadas": ["§1", "§1-bis", "§2", "§4", "§4-bis", "§7", "§8", "§10", "§11"],
+    "noSirvieron": ["§4-bis · LRN-e50bacb3 sobre Cancelar (el pack ya dice que no aplica)"],
+    "falto": [
+      { "que": "Cómo es el componente de búsqueda de Cliente y si hay debounce", "dondeLoEncontro": "decidido por mí imitando /pedidos/nuevo" },
+      { "que": "Dónde se avisa «Factura creada.» (NoticeService)", "dondeLoEncontro": "feature orders de este repo" }
+    ]
+  },
+  "evidence": [
+    { "type": "coverage_report", "ref": ".sdd/evidence/WI-H3-UX-FACTURAS-002/coverage-summary.json", "note": "Reporte de cobertura ≥80%: ficheros de invoices al 100 % de sentencias; total 98.95 %" }
+  ]
+}

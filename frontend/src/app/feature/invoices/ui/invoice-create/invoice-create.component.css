@@ -1,0 +1,12 @@
+.alta { max-width: 960px; margin: 0 auto; padding: 1rem; font-family: sans-serif; }
+.alta__grupo { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; border: 1px solid #ccc; border-radius: 6px; }
+.campo { display: flex; flex-direction: column; gap: 0.25rem; }
+.campo input, .campo select { padding: 0.4rem; }
+.campo input[aria-invalid='true'], .campo select[aria-invalid='true'] { border-color: #c01c28; }
+.campo__ayuda { margin: 0; font-size: 0.8rem; color: #555; }
+.campo__error { margin: 0; font-size: 0.85rem; color: #c01c28; }
+.alta__pie { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1rem; }
+.boton { padding: 0.4rem 0.8rem; border: 1px solid #888; border-radius: 4px; background: #fff; color: inherit; text-decoration: none; cursor: pointer; }
+.boton--primario { background: #1a5fb4; color: #fff; border-color: #1a5fb4; }
+.boton:disabled { opacity: 0.6; cursor: not-allowed; }
+@media (max-width: 600px) { .alta__grupo { grid-template-columns: 1fr; } }
