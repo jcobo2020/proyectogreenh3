@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 6,
+  "workItemCode": "WI-H3-API-POBLACIONES-001",
+  "summary": "GET /api/towns autenticado: valida provinceId (uuid, obligatorio), comprueba que la provincia exista, devuelve el array directo de poblaciones de esa provincia ordenado por nombre. Incluye modelo Town con índice {provinceId, name}, seed idempotente en transacción con ids fijos, Swagger y tests.",
+  "criteria": [
+    { "id": "AC-01", "status": "covered", "note": "towns.test.ts: 200 con array directo, solo la provincia pedida, orden por nombre incluso con inserción desordenada y empate de nombre (desempate por id); también [] para provincia sin poblaciones." },
+    { "id": "AC-02", "status": "covered", "note": "towns.test.ts: 401 UNAUTHORIZED sin token y con token inválido." },
+    { "id": "AC-03", "status": "covered", "note": "towns.test.ts: 400 VALIDATION_ERROR con provinceId ausente, vacío, no uuid o repetido; incluye details por campo." },
+    { "id": "AC-04", "status": "covered", "note": "towns.test.ts: 400 VALIDATION_ERROR cuando el uuid no existe en las provincias." }
+  ],
+  "requirements": [
+    { "id": "R4-ARQ-1", "status": "no_aplica", "evidencia": "contexto de frontend; este work item es solo backend" },
+    { "id": "R4-ARQ-2", "status": "no_aplica", "evidencia": "contexto de frontend" },
+    { "id": "R4-ARQ-3", "status": "cumple", "evidencia": "api/src/controllers/TownController.ts:1 · el contrato de §2 se sigue sin añadir campos ni códigos" },
+    { "id": "R4-ARQ-4", "status": "cumple", "evidencia": "api/src/services/TownService.ts:8 · la existencia de la provincia la decide el backend · towns.test.ts AC-04" },
+    { "id": "R4-ARQ-5", "status": "no_aplica", "evidencia": "contexto de frontend" },
+    { "id": "R4-ARQ-6", "status": "cumple", "evidencia": "api/src/models/town.ts · el estado vive en MongoDB" },
+    { "id": "R4-ARQ-7", "status": "cumple", "evidencia": "api/src/services/TownService.ts · consulta directa en cada petición, sin caché" },
+    { "id": "R4-SEG-1", "status": "cumple", "evidencia": "api/.env.example sin valores; JWT_SECRET solo por entorno; los tests generan el secreto con randomBytes" },
+    { "id": "R4-SEG-2", "status": "cumple", "evidencia": "api/src/routes/api.routes.ts · authenticate en /towns · towns.test.ts AC-02" },
+    { "id": "R4-SEG-3", "status": "no_aplica", "evidencia": "catálogo sin datos por usuario" },
+    { "id": "R4-SEG-4", "status": "cumple", "evidencia": "api/src/validators/townValidator.ts · towns.test.ts AC-03" },
+    { "id": "R4-SEG-5", "status": "cumple", "evidencia": "no se escribe ningún log con datos personales ni tokens" },
+    { "id": "R4-REND-1", "status": "cumple", "evidencia": "api/src/models/town.ts · estado solo en backend" },
+    { "id": "R4-REND-2", "status": "cumple", "evidencia": "api/src/services/TownService.ts · sin caché" },
+    { "id": "R4-OBS-1", "status": "cumple", "evidencia": "no se escribe ningún log con datos personales ni tokens" }
+  ],
+  "testsRun": [
+    { "name": "api/src/__tests__/towns.test.ts", "result": "pass" },
+    { "name": "api/src/__tests__/provinces.test.ts", "result": "pass" }
+  ],
+  "deviations": [
+    { "description": "El seed de poblaciones resuelve provinceId buscando la provincia por su code (la migración fija el id de cada Town, no el de la provincia).", "reason": "Los ids de Province los genera su propio seed (WI de provincias, por code) y no son fijos; no se puede escribir un provinceId literal en la migración sin tocar la spec de provincias.", "respondeA": "spec" },
+    { "description": "La clave foránea a Province se comprueba en el servicio (400 si no existe); no hay FK en la base ni JOIN.", "reason": "MongoDB no tiene claves foráneas; la dependencia pide FK y JOIN pensando en SQL. No se implementó el bloqueo de borrado de una provincia citada porque ningún contrato lo ofrece.", "respondeA": "plantilla" },
+    { "description": "El seed contiene solo 13 poblaciones de 6 provincias como datos iniciales.", "reason": "El pack no dice qué filas debe llevar la carga inicial; las demás provincias devuelven [].", "respondeA": "spec" }
+  ],
+  "dodSelfAssessment": { "met": true, "blockers": [] },
+  "clarificationRequests": [
+    { "question": "¿Qué poblaciones concretas debe cargar el seed y con qué ids?", "blocking": false, "context": "§3 dice que la migración inserta filas con id fijo pero no lista los datos; se eligieron algunas ciudades de Ecuador." },
+    { "question": "¿Cómo se fija provinceId en el seed si los ids de Province no son fijos?", "blocking": false, "context": "§3 y §4 (dependencia PROVINCIAS); se resolvió por code de provincia." }
+  ],
+  "evidence": [
+    { "type": "test_results", "ref": ".sdd/evidence/WI-H3-API-POBLACIONES-001/test-results.txt", "note": "Tests unitarios passing" },
+    { "type": "api_docs", "ref": "api/src/controllers/TownController.ts", "note": "Endpoints documentados en Swagger" },
+    { "type": "migration_log", "ref": ".sdd/evidence/WI-H3-API-POBLACIONES-001/arranque.txt", "note": "Migración ejecutada exitosamente" },
+    { "type": "coverage_report", "ref": ".sdd/evidence/WI-H3-API-POBLACIONES-001/coverage-summary.json", "note": "Reporte de cobertura ≥80%" }
+  ],
+  "usoDelPack": {
+    "usadas": ["§1", "§2", "§3", "§4", "§4-bis", "§7", "§8", "§11"],
+    "noSirvieron": ["§1-bis (lista genérica)", "FK/JOIN de la dependencia (SQL, no aplica a Mongo)"],
+    "falto": [
+      { "que": "Datos concretos del seed de poblaciones", "dondeLoEncontro": "no estaba; los inventé" },
+      { "que": "Estado actual del repo: ya había código de provincias en la rama del package anterior", "dondeLoEncontro": "git y lectura del código" }
+    ]
+  }
+}

@@ -1,0 +1,44 @@
+
+> api@1.0.0 test
+> jest --coverage --coverageReporters=text --coverageReporters=json-summary
+
+PASS src/__tests__/provinces.test.ts (5.445 s)
+PASS src/__tests__/towns.test.ts (6.809 s)
+-----------------------------|---------|----------|---------|---------|-------------------
+File                         | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-----------------------------|---------|----------|---------|---------|-------------------
+All files                    |   88.37 |    74.19 |   83.33 |   90.74 |                   
+ src                         |      50 |        0 |      40 |   53.57 |                   
+  app.ts                     |     100 |      100 |     100 |     100 |                   
+  server.ts                  |       0 |        0 |       0 |       0 | 1-17              
+ src/config                  |   85.71 |        0 |     100 |     100 |                   
+  connectDB.ts               |      80 |        0 |     100 |     100 | 3-4               
+  swagger.ts                 |     100 |      100 |     100 |     100 |                   
+ src/controllers             |      90 |      100 |     100 |      90 |                   
+  ProvinceController.ts      |      80 |      100 |     100 |      80 | 48                
+  TownController.ts          |     100 |      100 |     100 |     100 |                   
+ src/lib                     |     100 |    66.66 |     100 |     100 |                   
+  errors.ts                  |     100 |        0 |     100 |     100 | 15                
+  uuid.ts                    |     100 |      100 |     100 |     100 |                   
+ src/middlewares             |   96.55 |      100 |     100 |   96.42 |                   
+  authenticate.middleware.ts |     100 |      100 |     100 |     100 |                   
+  errorHandler.middleware.ts |   94.44 |      100 |     100 |   94.11 | 25                
+ src/models                  |     100 |      100 |     100 |     100 |                   
+  province.ts                |     100 |      100 |     100 |     100 |                   
+  town.ts                    |     100 |      100 |     100 |     100 |                   
+ src/routes                  |     100 |      100 |     100 |     100 |                   
+  api.routes.ts              |     100 |      100 |     100 |     100 |                   
+ src/services                |   95.83 |      100 |   81.81 |     100 |                   
+  ProvinceSeedService.ts     |    92.3 |      100 |   66.66 |     100 |                   
+  ProvinceService.ts         |     100 |      100 |     100 |     100 |                   
+  TownSeedService.ts         |      95 |      100 |      75 |     100 |                   
+  TownService.ts             |     100 |      100 |     100 |     100 |                   
+ src/validators              |     100 |      100 |     100 |     100 |                   
+  townValidator.ts           |     100 |      100 |     100 |     100 |                   
+-----------------------------|---------|----------|---------|---------|-------------------
+
+Test Suites: 2 passed, 2 total
+Tests:       16 passed, 16 total
+Snapshots:   0 total
+Time:        9.255 s
+Ran all test suites.

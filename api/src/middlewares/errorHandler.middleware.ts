@@ -16,7 +16,10 @@ export function errorHandler(err: any, _req: Request, res: Response, _next: Next
   }
   const app = err as AppError;
   if (app && typeof app.status === 'number' && app.code) {
-    res.status(app.status).json({ code: app.code, message: app.message });
+    const body: { code: string; message: string; details?: unknown } = { code: app.code, message: app.message };
+    const details = (app as AppError & { details?: unknown }).details;
+    if (Array.isArray(details)) body.details = details;
+    res.status(app.status).json(body);
     return;
   }
   res.status(500).json({ code: 'INTERNAL_ERROR', message: 'Error interno' });
