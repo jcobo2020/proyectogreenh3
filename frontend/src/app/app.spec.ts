@@ -7,6 +7,8 @@ import { clientsRoutes } from './feature/clients/clients.routes';
 import { serverRoutes } from './app.routes.server';
 import { NoticeService } from './@core/services/notice.service';
 import { CustomerCreateComponent } from './feature/clients/ui/customer-create/customer-create.component';
+import { pendingChangesGuard } from './@core/guards/pending-changes.guard';
+import { CustomerEditComponent } from './feature/clients/ui/customer-edit/customer-edit.component';
 import { CustomerDetailComponent } from './feature/clients/ui/customer-detail/customer-detail.component';
 import { CustomerListComponent } from './feature/clients/ui/customer-list/customer-list.component';
 
@@ -39,9 +41,11 @@ describe('App y rutas', () => {
 
   it('la ruta literal nuevo va antes que :id y carga el alta; :id carga el detalle', () => {
     const hijas = clientsRoutes[0].children ?? [];
-    expect(hijas.map((r) => r.path)).toEqual(['', 'nuevo', ':id']);
+    expect(hijas.map((r) => r.path)).toEqual(['', 'nuevo', ':id/editar', ':id']);
     expect(hijas[1].component).toBe(CustomerCreateComponent);
-    expect(hijas[2].component).toBe(CustomerDetailComponent);
+    expect(hijas[2].component).toBe(CustomerEditComponent);
+    expect(hijas[2].canDeactivate).toEqual([pendingChangesGuard]);
+    expect(hijas[3].component).toBe(CustomerDetailComponent);
   });
 
   it('muestra el aviso del NoticeService', () => {

@@ -53,3 +53,21 @@ export class CustomerInfrastructureError extends Error {
     this.name = 'CustomerInfrastructureError';
   }
 }
+
+/** 412 al guardar: otra persona cambió el cliente desde que se cargó. */
+export class CustomerChangedError extends Error {
+  constructor() {
+    super(
+      'Otra persona cambió este cliente mientras lo editabas: se ha cargado lo de ahora; revísalo y vuelve a guardar.',
+    );
+    this.name = 'CustomerChangedError';
+  }
+}
+
+/** 428 al guardar: falta la cabecera If-Match. */
+export class CustomerPreconditionRequiredError extends Error {
+  constructor() {
+    super('Algo falló. Vuelve a intentarlo.');
+    this.name = 'CustomerPreconditionRequiredError';
+  }
+}

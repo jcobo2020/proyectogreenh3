@@ -51,3 +51,9 @@ export interface NewCustomer {
   status: string;
   streetAddress: string;
 }
+
+/** Cliente con el ETag que devolvió el servidor (se envía en If-Match al guardar). */
+export interface VersionedCustomer {
+  customer: CustomerDetail;
+  etag: string;
+}

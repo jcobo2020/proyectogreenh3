@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 6,
+  "workItemCode": "WI-H3-UX-GESTION-DE-CLIENTES-004",
+  "summary": "Pantalla /clientes/:id/editar (CustomerEditComponent) con carga paralela de provincias y registro, ETag en If-Match, estados cargando/error/401/404, avisos por código al guardar (400/401/404/409/412/428), regla Provincia→Población, aviso de cambios sin guardar y tests de componente, repositorio, casos de uso y guard.",
+  "criteria": [
+    { "id": "AC-19", "status": "covered", "note": "customer-edit.component.spec.ts: «AC-19» rellena los campos del registro; «ID» empieza con el :id." },
+    { "id": "AC-20", "status": "covered", "note": "Spec: «Cargando…» mientras espera y sin formulario." },
+    { "id": "AC-21", "status": "covered", "note": "Spec: fallo de carga muestra el mensaje, ofrece reintentar y no enseña el formulario." },
+    { "id": "AC-22", "status": "covered", "note": "Spec: carga con 400 → «Revisa los datos marcados.»" },
+    { "id": "AC-23", "status": "covered", "note": "Spec: carga con 401 → «Tu sesión terminó: vuelve a entrar.» con enlace a entrar." },
+    { "id": "AC-24", "status": "covered", "note": "Spec: carga con 404 → «No se encontró lo que buscas.» sin formulario." },
+    { "id": "AC-36", "status": "covered", "note": "Spec: éxito navega a /clientes/:id y avisa «Se guardó correctamente.»" },
+    { "id": "AC-37", "status": "covered", "note": "Spec: guardar con 400 → «Revisa los datos marcados.»" },
+    { "id": "AC-38", "status": "covered", "note": "Spec: guardar con 401 → «Tu sesión terminó: vuelve a entrar.»" },
+    { "id": "AC-39", "status": "covered", "note": "Spec: guardar con 404 → «No se encontró lo que buscas.»" },
+    { "id": "AC-40", "status": "covered", "note": "Spec: guardar con 409 → «Ya existe otro con el mismo «Email».», conserva lo escrito." },
+    { "id": "AC-41", "status": "covered", "note": "Spec: 412 recarga «Cargar el elemento», avisa y el siguiente guardado usa el ETag nuevo." },
+    { "id": "AC-42", "status": "covered", "note": "Spec: guardar con 428 → «Algo falló. Vuelve a intentarlo.»" }
+  ],
+  "requirements": [
+    { "id": "R4-ARQ-1", "status": "no_aplica", "evidencia": "Idempotency-Key es de «Crear cliente» (otro work item)." },
+    { "id": "R4-ARQ-2", "status": "cumple", "evidencia": "http-customer.repository.ts getVersioned/update · customer-edit.component.spec.ts «AC-41», http-customer-edit.repository.spec.ts «envía el cuerpo con If-Match»" },
+    { "id": "R4-ARQ-3", "status": "cumple", "evidencia": "customer-edit.component.ts fill() · spec «AC-19» (Población activa, con opciones y sin vaciarse)" },
+    { "id": "R4-ARQ-4", "status": "cumple", "evidencia": "Solo HttpClient contra /api (http-customer.repository.ts)" },
+    { "id": "R4-ARQ-5", "status": "cumple", "evidencia": "El frontend no accede a base de datos" },
+    { "id": "R4-ARQ-6", "status": "cumple", "evidencia": "Formas de petición y respuesta tomadas del contrato de §2" },
+    { "id": "R4-ARQ-7", "status": "cumple", "evidencia": "La unicidad de Email la decide el servidor (409); el frontend no la calcula" },
+    { "id": "R4-ARQ-8", "status": "cumple", "evidencia": "Idem R4-ARQ-7" },
+    { "id": "R4-ARQ-9", "status": "cumple", "evidencia": "Sin estado local persistente; cada entrada recarga del servidor" },
+    { "id": "R4-ARQ-10", "status": "cumple", "evidencia": "Sin cachés: provincias y registro se piden al entrar" },
+    { "id": "R4-PRUEBAS-1", "status": "no_aplica", "evidencia": "Pantalla /clientes (otro work item)" },
+    { "id": "R4-PRUEBAS-2", "status": "no_aplica", "evidencia": "Prueba del repositorio de provincias, ya existente" },
+    { "id": "R4-PRUEBAS-3", "status": "no_aplica", "evidencia": "GET /api/customers (otro work item)" },
+    { "id": "R4-PRUEBAS-4", "status": "no_aplica", "evidencia": "Pantalla /clientes/:id (otro work item)" },
+    { "id": "R4-PRUEBAS-5", "status": "no_aplica", "evidencia": "DELETE (otro work item)" },
+    { "id": "R4-PRUEBAS-6", "status": "cumple", "evidencia": "http-customer-edit.repository.spec.ts · GET con 200, 400, 401, 404" },
+    { "id": "R4-PRUEBAS-7", "status": "no_aplica", "evidencia": "Pantalla /clientes/nuevo (otro work item)" },
+    { "id": "R4-PRUEBAS-8", "status": "no_aplica", "evidencia": "Es de «Crear cliente»" },
+    { "id": "R4-PRUEBAS-9", "status": "no_aplica", "evidencia": "Es de «Crear cliente»" },
+    { "id": "R4-PRUEBAS-10", "status": "no_aplica", "evidencia": "POST (otro work item)" },
+    { "id": "R4-PRUEBAS-11", "status": "cumple", "evidencia": "customer-edit.component.spec.ts · carga, error, los seis obligatorios y «Cancelar» a /clientes/:id" },
+    { "id": "R4-PRUEBAS-12", "status": "cumple", "evidencia": "spec «si falla «Provincia», ofrece reintentar y bloquea «Guardar cambios»»" },
+    { "id": "R4-PRUEBAS-13", "status": "cumple", "evidencia": "spec «si falla «Población», ofrece reintentar y bloquea «Guardar cambios»»" },
+    { "id": "R4-PRUEBAS-14", "status": "cumple", "evidencia": "http-customer-edit.repository.spec.ts (200, 400, 401, 404, 409, 412, 428) y spec del componente (avisos y navegación)" },
+    { "id": "R4-PRUEBAS-15", "status": "cumple", "evidencia": "Continuación del texto de R4-PRUEBAS-14: «si falla, conserva lo escrito, ofrece reintentar»; spec «si falla ofrece reintentar y repite el envío»" },
+    { "id": "R4-PRUEBAS-16", "status": "cumple", "evidencia": "http-customer-edit.repository.spec.ts · GET con 200, 401, 404, 400" },
+    { "id": "R4-PRUEBAS-17", "status": "cumple", "evidencia": "Los 13 AC tienen al menos una prueba (ver criteria)" },
+    { "id": "R4-PRUEBAS-18", "status": "cumple", "evidencia": "http-customer-edit.repository.spec.ts cubre cada código del contrato de GET y PUT" },
+    { "id": "R4-PRUEBAS-19", "status": "cumple", "evidencia": "Estados cargando, error, 401 (sin permiso) y con datos cubiertos; «vacío» no aplica a esta pantalla: no declara ninguno" },
+    { "id": "R4-PRUEBAS-20", "status": "cumple", "evidencia": "node comprobar.js: install, test y build en verde" },
+    { "id": "R4-SEG-1", "status": "cumple", "evidencia": "Sin secretos en el código ni en las pruebas" },
+    { "id": "R4-SEG-2", "status": "no_aplica", "evidencia": "Es del backend; el frontend manda el JWT con jwtInterceptor" },
+    { "id": "R4-SEG-3", "status": "no_aplica", "evidencia": "Es del backend" },
+    { "id": "R4-SEG-4", "status": "cumple", "evidencia": "El frontend valida los obligatorios y el servidor sigue decidiendo (400)" },
+    { "id": "R4-SEG-5", "status": "cumple", "evidencia": "El componente no escribe logs" },
+    { "id": "R4-SEG-6", "status": "cumple", "evidencia": "401 en carga y en guardado dice «Tu sesión terminó: vuelve a entrar.» (spec del componente)" },
+    { "id": "R4-REND-1", "status": "cumple", "evidencia": "Ver R4-ARQ-9" },
+    { "id": "R4-REND-2", "status": "cumple", "evidencia": "Ver R4-ARQ-10" },
+    { "id": "R4-OBS-1", "status": "cumple", "evidencia": "Ver R4-SEG-5" }
+  ],
+  "testsRun": [
+    { "name": "customer-edit.component.spec.ts", "result": "pass" },
+    { "name": "http-customer-edit.repository.spec.ts", "result": "pass" },
+    { "name": "customer-edit.use-cases.spec.ts", "result": "pass" },
+    { "name": "pending-changes.guard.spec.ts", "result": "pass" },
+    { "name": "app.spec.ts", "result": "pass" }
+  ],
+  "deviations": [
+    {
+      "description": "Se añadió un guard canDeactivate (@core/guards/pending-changes.guard.ts) que usa window.confirm para preguntar si descartar cambios sin guardar.",
+      "reason": "§2 pide preguntar al salir con cambios sin guardar y no dice cómo; ni la plantilla ni la spec definen un diálogo.",
+      "respondeA": "otra"
+    }
+  ],
+  "dodSelfAssessment": {
+    "met": true,
+    "blockers": []
+  },
+  "clarificationRequests": [
+    {
+      "question": "¿Cómo debe preguntar la pantalla si se descartan los cambios (diálogo propio o confirmación del navegador)? Usé window.confirm.",
+      "blocking": false,
+      "context": "§2 «Al entrar en Editar cliente» dice «se pregunta si descartarlos» sin definir el control."
+    },
+    {
+      "question": "El contrato dice que «vacío» es un estado de las pantallas (§4 R4-PRUEBAS-19), pero /clientes/:id/editar no declara ninguno; no lo implementé.",
+      "blocking": false,
+      "context": "§2 solo declara cargando, error, 400, 401 y 404 para esta pantalla."
+    }
+  ],
+  "evidence": [
+    { "type": "coverage_report", "ref": ".sdd/evidence/WI-H3-UX-GESTION-DE-CLIENTES-004/coverage-summary.json", "note": "Reporte de cobertura ≥80% (sentencias 98.52 %, líneas 99.86 %), salida real de npm test --coverage" }
+  ],
+  "usoDelPack": {
+    "usadas": ["§1", "§2", "§4", "§4-bis", "§7", "§8", "§10", "§11"],
+    "noSirvieron": ["§4 R4-PRUEBAS-1..10 (de otros work items)", "R4-ARQ-1 (Idempotency-Key, de «Crear cliente»)"],
+    "falto": []
+  }
+}

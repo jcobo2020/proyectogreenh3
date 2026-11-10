@@ -2,6 +2,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import {
   CustomerBusinessRuleError,
+  CustomerChangedError,
+  CustomerPreconditionRequiredError,
   CustomerInUseError,
   CustomerInfrastructureError,
   CustomerNotFoundError,
@@ -25,5 +27,14 @@ export function traducirAlta(error: unknown): Observable<never> {
   const status = error instanceof HttpErrorResponse ? error.status : 0;
   if (status === 409) return throwError(() => new DuplicateCustomerEmailError());
   if (status === 422) return throwError(() => new CustomerBusinessRuleError());
+  return traducir(error);
+}
+
+/** Como `traducir`, pero al guardar cambios: 409 email repetido, 412 versión cambiada, 428 falta If-Match. */
+export function traducirEdicion(error: unknown): Observable<never> {
+  const status = error instanceof HttpErrorResponse ? error.status : 0;
+  if (status === 409) return throwError(() => new DuplicateCustomerEmailError());
+  if (status === 412) return throwError(() => new CustomerChangedError());
+  if (status === 428) return throwError(() => new CustomerPreconditionRequiredError());
   return traducir(error);
 }

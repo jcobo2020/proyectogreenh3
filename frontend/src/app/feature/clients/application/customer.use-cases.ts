@@ -7,6 +7,7 @@ import {
   NewCustomer,
   Province,
   Town,
+  VersionedCustomer,
 } from '../domain/models/customer.model';
 import { CUSTOMER_REPOSITORY } from '../domain/ports/customer-repository.port';
 import { TOWN_REPOSITORY } from '../domain/ports/town-repository.port';
@@ -54,6 +55,24 @@ export class CreateCustomerUseCase {
 
   execute(customer: NewCustomer, idempotencyKey: string): Observable<CustomerDetail> {
     return this.repository.create(customer, idempotencyKey);
+  }
+}
+
+@Injectable()
+export class GetCustomerForEditUseCase {
+  private readonly repository = inject(CUSTOMER_REPOSITORY);
+
+  execute(id: string): Observable<VersionedCustomer> {
+    return this.repository.getVersioned(id);
+  }
+}
+
+@Injectable()
+export class UpdateCustomerUseCase {
+  private readonly repository = inject(CUSTOMER_REPOSITORY);
+
+  execute(id: string, customer: NewCustomer, etag: string): Observable<VersionedCustomer> {
+    return this.repository.update(id, customer, etag);
   }
 }
 

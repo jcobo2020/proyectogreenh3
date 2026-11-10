@@ -1,10 +1,16 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, catchError } from 'rxjs';
+import { Observable, catchError, map } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { CustomerDetail, CustomerFilters, CustomerPage, NewCustomer } from '../domain/models/customer.model';
+import {
+  CustomerDetail,
+  CustomerFilters,
+  CustomerPage,
+  NewCustomer,
+  VersionedCustomer,
+} from '../domain/models/customer.model';
 import { CustomerRepositoryPort } from '../domain/ports/customer-repository.port';
-import { traducir, traducirAlta } from './http-error.translator';
+import { traducir, traducirAlta, traducirEdicion } from './http-error.translator';
 
 @Injectable()
 export class HttpCustomerRepository implements CustomerRepositoryPort {
@@ -39,4 +45,25 @@ export class HttpCustomerRepository implements CustomerRepositoryPort {
       })
       .pipe(catchError(traducirAlta));
   }
+
+  getVersioned(id: string): Observable<VersionedCustomer> {
+    return this.http
+      .get<CustomerDetail>(`${environment.apiBaseUrl}/customers/${encodeURIComponent(id)}`, { observe: 'response' })
+      .pipe(map(conEtag), catchError(traducir));
+  }
+
+  update(id: string, customer: NewCustomer, etag: string): Observable<VersionedCustomer> {
+    return this.http
+      .put<CustomerDetail>(`${environment.apiBaseUrl}/customers/${encodeURIComponent(id)}`, customer, {
+        headers: { 'If-Match': etag },
+        observe: 'response',
+      })
+      .pipe(map(conEtag), catchError(traducirEdicion));
+  }
+}
+
+/** El ETag de la respuesta; si no llega, el de su versión entre comillas. */
+function conEtag(response: HttpResponse<CustomerDetail>): VersionedCustomer {
+  const customer = response.body as CustomerDetail;
+  return { customer, etag: response.headers.get('ETag') ?? `"${customer.version}"` };
 }
