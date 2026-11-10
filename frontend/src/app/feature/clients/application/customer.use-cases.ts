@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CustomerFilters, CustomerPage, Province } from '../domain/models/customer.model';
+import { CustomerDetail, CustomerFilters, CustomerPage, Province } from '../domain/models/customer.model';
 import { CUSTOMER_REPOSITORY } from '../domain/ports/customer-repository.port';
 import { PROVINCE_REPOSITORY } from '../domain/ports/province-repository.port';
 
@@ -19,5 +19,23 @@ export class ListProvincesUseCase {
 
   execute(): Observable<Province[]> {
     return this.repository.list();
+  }
+}
+
+@Injectable()
+export class GetCustomerUseCase {
+  private readonly repository = inject(CUSTOMER_REPOSITORY);
+
+  execute(id: string): Observable<CustomerDetail> {
+    return this.repository.get(id);
+  }
+}
+
+@Injectable()
+export class DeleteCustomerUseCase {
+  private readonly repository = inject(CUSTOMER_REPOSITORY);
+
+  execute(id: string): Observable<void> {
+    return this.repository.delete(id);
   }
 }

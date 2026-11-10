@@ -14,6 +14,22 @@ export class CustomerSessionExpiredError extends Error {
   }
 }
 
+/** 404: el cliente no existe. */
+export class CustomerNotFoundError extends Error {
+  constructor() {
+    super('No se encontró lo que buscas.');
+    this.name = 'CustomerNotFoundError';
+  }
+}
+
+/** 409 (IN_USE): otro dato cita al cliente y no se borra. */
+export class CustomerInUseError extends Error {
+  constructor() {
+    super('Otro dato lo cita.');
+    this.name = 'CustomerInUseError';
+  }
+}
+
 /** Cualquier otro fallo (red, 5xx…). */
 export class CustomerInfrastructureError extends Error {
   constructor() {

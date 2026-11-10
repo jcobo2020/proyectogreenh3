@@ -9,6 +9,12 @@ export interface CustomerListItem {
   status: string;
 }
 
+/** Cliente completo, como lo devuelve GET /api/customers/:id. */
+export interface CustomerDetail extends CustomerListItem {
+  streetAddress: string;
+  version: number;
+}
+
 export interface CustomerFilters {
   name: string;
   provinceId: string;

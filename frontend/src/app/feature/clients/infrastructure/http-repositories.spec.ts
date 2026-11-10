@@ -2,7 +2,9 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import {
+  CustomerInUseError,
   CustomerInfrastructureError,
+  CustomerNotFoundError,
   CustomerSessionExpiredError,
   InvalidCustomerInputError,
 } from '../domain/errors/customer.errors';
@@ -89,5 +91,56 @@ describe('HttpProvinceRepository · GET /api/provinces', () => {
     provincias.list().subscribe({ error: (e) => (error = e) });
     http.expectOne('/api/provinces').flush({}, { status: 401, statusText: 'x' });
     expect(error).toBeInstanceOf(CustomerSessionExpiredError);
+  });
+});
+
+describe('HttpCustomerRepository · GET y DELETE /api/customers/:id', () => {
+  const detalle = { id: 'u1', name: 'Ana', streetAddress: 'Calle 1' };
+
+  it('GET 200: devuelve el cliente', () => {
+    const { http, clientes } = preparar();
+    let resultado: unknown;
+    clientes.get('u1').subscribe((r) => (resultado = r));
+    const req = http.expectOne('/api/customers/u1');
+    expect(req.request.method).toBe('GET');
+    req.flush(detalle);
+    expect(resultado).toEqual(detalle);
+  });
+
+  it.each([
+    [400, InvalidCustomerInputError],
+    [401, CustomerSessionExpiredError],
+    [404, CustomerNotFoundError],
+    [500, CustomerInfrastructureError],
+  ])('GET %i se traduce a su error de dominio', (status, clase) => {
+    const { http, clientes } = preparar();
+    let error: unknown;
+    clientes.get('u1').subscribe({ error: (e) => (error = e) });
+    http.expectOne('/api/customers/u1').flush({}, { status, statusText: 'x' });
+    expect(error).toBeInstanceOf(clase);
+  });
+
+  it('DELETE 204: completa sin valor', () => {
+    const { http, clientes } = preparar();
+    let completo = false;
+    clientes.delete('u1').subscribe({ complete: () => (completo = true) });
+    const req = http.expectOne('/api/customers/u1');
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null, { status: 204, statusText: 'No Content' });
+    expect(completo).toBe(true);
+  });
+
+  it.each([
+    [400, InvalidCustomerInputError],
+    [401, CustomerSessionExpiredError],
+    [404, CustomerNotFoundError],
+    [409, CustomerInUseError],
+    [500, CustomerInfrastructureError],
+  ])('DELETE %i se traduce a su error de dominio', (status, clase) => {
+    const { http, clientes } = preparar();
+    let error: unknown;
+    clientes.delete('u1').subscribe({ error: (e) => (error = e) });
+    http.expectOne('/api/customers/u1').flush({}, { status, statusText: 'x' });
+    expect(error).toBeInstanceOf(clase);
   });
 });

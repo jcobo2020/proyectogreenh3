@@ -5,6 +5,8 @@ import { App } from './app';
 import { routes } from './app.routes';
 import { clientsRoutes } from './feature/clients/clients.routes';
 import { serverRoutes } from './app.routes.server';
+import { NoticeService } from './@core/services/notice.service';
+import { CustomerDetailComponent } from './feature/clients/ui/customer-detail/customer-detail.component';
 import { CustomerListComponent } from './feature/clients/ui/customer-list/customer-list.component';
 
 describe('App y rutas', () => {
@@ -32,6 +34,19 @@ describe('App y rutas', () => {
     expect(hijas[0].component).toBe(CustomerListComponent);
     const cargadas = await (routes.find((r) => r.path === 'clientes')!.loadChildren as () => Promise<unknown>)();
     expect(cargadas).toBe(clientsRoutes);
+  });
+
+  it('la ruta :id carga el detalle de cliente y va después de la lista', () => {
+    const hijas = clientsRoutes[0].children ?? [];
+    expect(hijas.map((r) => r.path)).toEqual(['', ':id']);
+    expect(hijas[1].component).toBe(CustomerDetailComponent);
+  });
+
+  it('muestra el aviso del NoticeService', () => {
+    TestBed.inject(NoticeService).show('Cliente eliminado.');
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    expect((fixture.nativeElement as HTMLElement).querySelector('.aviso')?.textContent).toContain('Cliente eliminado.');
   });
 
   it('las rutas del servidor se pintan en el cliente', () => {

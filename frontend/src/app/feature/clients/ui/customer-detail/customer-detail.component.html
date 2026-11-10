@@ -1,0 +1,74 @@
+<section class="detalle">
+  @switch (state()) {
+    @case ('loading') {
+      <p role="status">Cargando…</p>
+    }
+    @case ('empty') {
+      <p role="status">No hay datos que mostrar.</p>
+    }
+    @case ('error') {
+      <p role="alert">
+        No se pudo cargar. Vuelve a intentarlo.
+        <button type="button" class="boton" (click)="load()">Reintentar</button>
+      </p>
+    }
+    @case ('invalid') {
+      <p role="alert">Revisa los datos marcados.</p>
+    }
+    @case ('notfound') {
+      <p role="alert">No se encontró lo que buscas.</p>
+    }
+    @case ('session') {
+      <p role="alert">
+        Tu sesión terminó: vuelve a entrar.
+        <a class="boton" [href]="loginHref">Entrar</a>
+      </p>
+    }
+    @case ('data') {
+      <header class="detalle__cabecera">
+        <h1>Detalle de cliente</h1>
+        <div class="detalle__acciones">
+          <a class="boton boton--primario" [routerLink]="['/clientes', id, 'editar']">
+            <span aria-hidden="true">✎</span> Editar cliente
+          </a>
+          <button type="button" class="boton boton--peligro" (click)="openDialog()">
+            <span aria-hidden="true">🗑</span> Eliminar cliente
+          </button>
+        </div>
+      </header>
+
+      <dl class="detalle__datos">
+        <div><dt>ID</dt><dd>{{ id }}</dd></div>
+        <div><dt>Nombre</dt><dd>{{ customer()?.name }}</dd></div>
+        <div><dt>Email</dt><dd>{{ customer()?.email }}</dd></div>
+        <div><dt>Dirección</dt><dd>{{ customer()?.streetAddress }}</dd></div>
+        <div><dt>Provincia</dt><dd>{{ customer()?.provinceName }}</dd></div>
+        <div><dt>Población</dt><dd>{{ customer()?.townName }}</dd></div>
+        <div><dt>Estado</dt><dd>{{ statusLabel() }}</dd></div>
+      </dl>
+    }
+  }
+
+  @if (dialogOpen()) {
+    <div class="dialogo" role="dialog" aria-modal="true" aria-labelledby="dialogo-titulo">
+      <h2 id="dialogo-titulo">Confirmar eliminación de cliente</h2>
+      <p>Esta acción no se puede deshacer. ¿Deseas eliminar el cliente?</p>
+      @if (deleteError(); as aviso) {
+        <p role="alert">
+          {{ aviso }}
+          @if (deleteSession()) {
+            <a class="boton" [href]="loginHref">Entrar</a>
+          }
+        </p>
+      }
+      <footer class="dialogo__pie">
+        <button type="button" class="boton" (click)="closeDialog()">
+          <span aria-hidden="true">✕</span> Cancelar
+        </button>
+        <button type="button" class="boton boton--peligro" [disabled]="deleting()" (click)="confirmDelete()">
+          {{ deleting() ? 'Eliminando…' : 'Eliminar cliente' }}
+        </button>
+      </footer>
+    </div>
+  }
+</section>

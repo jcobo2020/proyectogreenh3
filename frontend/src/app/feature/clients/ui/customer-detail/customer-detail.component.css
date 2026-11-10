@@ -1,0 +1,12 @@
+.detalle { max-width: 960px; margin: 0 auto; padding: 1rem; font-family: sans-serif; }
+.detalle__cabecera { display: flex; justify-content: space-between; align-items: center; }
+.detalle__acciones { display: flex; gap: 0.5rem; }
+.detalle__datos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.detalle__datos dt { font-weight: bold; }
+.detalle__datos dd { margin: 0; }
+.dialogo { position: fixed; top: 20%; left: 50%; transform: translateX(-50%); min-width: 320px; padding: 1rem 1.5rem; background: #fff; border: 1px solid #888; border-radius: 6px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); }
+.dialogo__pie { display: flex; justify-content: flex-end; gap: 0.5rem; }
+.boton { padding: 0.4rem 0.8rem; border: 1px solid #888; border-radius: 4px; background: #fff; color: inherit; text-decoration: none; cursor: pointer; }
+.boton--primario { background: #1a5fb4; color: #fff; border-color: #1a5fb4; }
+.boton--peligro { background: #c01c28; color: #fff; border-color: #c01c28; }
+@media (max-width: 600px) { .detalle__datos { grid-template-columns: 1fr; } }
