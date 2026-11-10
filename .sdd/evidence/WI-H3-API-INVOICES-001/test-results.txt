@@ -1,0 +1,36 @@
+
+> api@1.0.0 test
+> jest --verbose --testPathPattern=invoices
+
+PASS src/__tests__/invoices.test.ts (6.654 s)
+  POST /api/invoices
+    ✓ AC-01: 201 con id, datos enviados, number y customerName (49 ms)
+    ✓ number correlativo por año de la factura, con 6 cifras y vuelve a 000001 cada año (53 ms)
+    ✓ AC-02: 400 con datos no válidos (y detalles por campo) (15 ms)
+    ✓ AC-02: 400 con fecha posterior a hoy, importe menor que 0.01 y cuerpo que no es objeto (61 ms)
+    ✓ AC-02: 400 si falta la cabecera Idempotency-Key (5 ms)
+    ✓ AC-03: 401 sin sesión válida (3 ms)
+    ✓ AC-04: 422 si la clave se usó con otro cuerpo (18 ms)
+    ✓ AC-05: 400 si customerId no existe (12 ms)
+    ✓ AC-06: la misma clave y cuerpo devuelve el mismo 201 con Idempotent-Replayed y no crea otro (23 ms)
+    ✓ un 4xx se guarda y se repite igual con la misma clave; la clave de otro usuario es otra (35 ms)
+    ✓ una clave caducada vale para un envío nuevo (35 ms)
+    ✓ AC-07: dos envíos a la vez con la misma clave crean uno solo (29 ms)
+    ✓ altas a la vez con claves distintas reciben numbers distintos (59 ms)
+  GET /api/invoices
+    ✓ AC-08: 200 ordenada por date desc (y a igualdad por id), con customerName (5 ms)
+    ✓ AC-08: filtra por customerId y pagina (11 ms)
+    ✓ el nombre se lee al responder: si cambia el cliente, se ve el nuevo (11 ms)
+    ✓ AC-09: 401 sin sesión válida (2 ms)
+    ✓ AC-10: 400 con un parámetro no válido (8 ms)
+    ✓ AC-11: 400 si customerId no existe (3 ms)
+  RN-01: todos ven todo
+    ✓ AC-12: cada cuenta ve también las facturas que creó la otra (30 ms)
+  integración con clientes
+    ✓ no se borra un cliente con facturas (IN_USE) (24 ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       21 passed, 21 total
+Snapshots:   0 total
+Time:        6.911 s, estimated 10 s
+Ran all test suites matching /invoices/i.

@@ -6,6 +6,7 @@ import { Customer } from './models/customer';
 import { IdempotencyKey } from './models/idempotencyKey';
 import { Counter } from './models/counter';
 import { Order } from './models/order';
+import { Invoice } from './models/invoice';
 
 async function main(): Promise<void> {
   if (!process.env.JWT_SECRET) throw new Error('JWT_SECRET no está definida');
@@ -17,7 +18,8 @@ async function main(): Promise<void> {
   await IdempotencyKey.init();
   await Counter.init();
   await Order.init();
-  console.log('Esquema listo: Customer, IdempotencyKey, Counter, Order');
+  await Invoice.init();
+  console.log('Esquema listo: Customer, IdempotencyKey, Counter, Order, Invoice');
   const port = Number(process.env.PORT) || 3000;
   createApp().listen(port, () => console.log(`API escuchando en el puerto ${port}`));
 }
