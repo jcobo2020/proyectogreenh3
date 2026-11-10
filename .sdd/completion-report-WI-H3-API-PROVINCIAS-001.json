@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 6,
+  "workItemCode": "WI-H3-API-PROVINCIAS-001",
+  "summary": "Proyecto Node/Express/Mongoose+TS creado desde cero con GET /api/provinces (autenticado con JWT, lista completa ordenada por nombre), modelo Province con índices, seed idempotente transaccional al arrancar y Swagger.",
+  "criteria": [
+    { "id": "AC-01", "status": "covered", "note": "provinces.test.ts: 200, array directo, 24 filas, orden por nombre (también con una fila insertada fuera de orden)." },
+    { "id": "AC-02", "status": "covered", "note": "provinces.test.ts: 401 con code UNAUTHORIZED sin token, con token basura y con token firmado con otra clave." }
+  ],
+  "requirements": [
+    { "id": "R4-ARQ-1", "status": "no_aplica", "evidencia": "frontend, fuera de alcance" },
+    { "id": "R4-ARQ-2", "status": "no_aplica", "evidencia": "frontend, fuera de alcance" },
+    { "id": "R4-ARQ-3", "status": "cumple", "evidencia": "api/src/controllers/ProvinceController.ts:1 · forma según contrato §2" },
+    { "id": "R4-ARQ-4", "status": "no_aplica", "evidencia": "sin regla de negocio en este endpoint" },
+    { "id": "R4-ARQ-5", "status": "no_aplica", "evidencia": "frontend, fuera de alcance" },
+    { "id": "R4-ARQ-6", "status": "cumple", "evidencia": "api/src/services/ProvinceService.ts · estado solo en BD" },
+    { "id": "R4-ARQ-7", "status": "cumple", "evidencia": "api/src/services/ProvinceService.ts · sin caché; provinces.test.ts orden tras insertar" },
+    { "id": "R4-SEG-1", "status": "cumple", "evidencia": "api/.env.example sin valores; JWT_SECRET solo de entorno (authenticate.middleware.ts, server.ts)" },
+    { "id": "R4-SEG-2", "status": "cumple", "evidencia": "api/src/routes/api.routes.ts:6 · provinces.test.ts AC-02" },
+    { "id": "R4-SEG-3", "status": "no_aplica", "evidencia": "catálogo sin datos por usuario" },
+    { "id": "R4-SEG-4", "status": "no_aplica", "evidencia": "el endpoint no recibe entrada" },
+    { "id": "R4-SEG-5", "status": "cumple", "evidencia": "no se escribe ningún log con datos personales ni tokens" },
+    { "id": "R4-REND-1", "status": "cumple", "evidencia": "api/src/services/ProvinceService.ts" },
+    { "id": "R4-REND-2", "status": "cumple", "evidencia": "api/src/services/ProvinceService.ts · sin caché" },
+    { "id": "R4-OBS-1", "status": "cumple", "evidencia": "api/src/server.ts · solo se loguea el puerto" }
+  ],
+  "testsRun": [ { "name": "api/src/__tests__/provinces.test.ts", "result": "pass" } ],
+  "deviations": [
+    { "description": "El 401 devuelve {code:'UNAUTHORIZED', message:'UNAUTHORIZED'}.", "reason": "El catálogo de errores dice que el código viaja en `message` y la respuesta 401 declara además `code`; se rellenan ambos.", "respondeA": "spec" },
+    { "description": "typescript fijado en 5.x y mongoose en 8.x.", "reason": "TypeScript 7 no expone la API que necesita ts-jest; mongoose 9 no conectaba con la MongoDB 7.0.14 en memoria.", "respondeA": "plantilla" }
+  ],
+  "dodSelfAssessment": { "met": true, "blockers": [] },
+  "clarificationRequests": [
+    { "question": "¿Cómo se emite/valida el token de sesión (algoritmo, claims)? ¿Qué datos exactos tiene el seed de provincias?", "blocking": false, "context": "§2 y §3 no lo definen. Asumí JWT HS256 firmado con JWT_SECRET y las 24 provincias de Ecuador (códigos INEC 01-24)." }
+  ],
+  "evidence": [
+    { "type": "test_results", "ref": ".sdd/evidence/WI-H3-API-PROVINCIAS-001/test-results.txt", "note": "Tests unitarios passing" },
+    { "type": "api_docs", "ref": "api/src/controllers/ProvinceController.ts", "note": "Endpoints documentados en Swagger" },
+    { "type": "coverage_report", "ref": ".sdd/evidence/WI-H3-API-PROVINCIAS-001/coverage-summary.json", "note": "Cobertura 83,33 % de sentencias sobre todos los ficheros de src" }
+  ],
+  "usoDelPack": {
+    "usadas": ["§1", "§2", "§3", "§4", "§4-bis", "§7", "§8", "§11"],
+    "noSirvieron": ["§1-bis (lista de contexto)"],
+    "falto": [
+      { "que": "Mecanismo de autenticación (emisión/validación del token)", "dondeLoEncontro": "decisión propia: JWT HS256 con JWT_SECRET" },
+      { "que": "Datos del seed de provincias", "dondeLoEncontro": "conocimiento propio (INEC Ecuador)" }
+    ]
+  }
+}

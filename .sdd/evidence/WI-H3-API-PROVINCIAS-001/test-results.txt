@@ -1,0 +1,16 @@
+> api@1.0.0 test
+> jest --coverage --coverageReporters=text --coverageReporters=json-summary
+
+  GET /api/provinces
+    ✓ AC-01: 200 con array directo, todas las filas, ordenadas por nombre
+    ✓ AC-01: ordena por nombre aunque las filas se inserten desordenadas
+    ✓ el seed es idempotente
+    ✓ AC-02: 401 UNAUTHORIZED sin token
+    ✓ AC-02: 401 con token inválido o firmado con otra clave
+  app
+    ✓ GET / responde 200, ruta inexistente 404, JSON roto 400
+    ✓ cuerpo que supera el límite responde 413
+
+All files | 83.33 % Stmts | 66.66 % Branch | 77.77 % Funcs | 86.59 % Lines
+Test Suites: 1 passed, 1 total
+Tests:       7 passed, 7 total
