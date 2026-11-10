@@ -1,0 +1,262 @@
+{
+  "schemaVersion": 6,
+  "workItemCode": "WI-H3-UX-PEDIDOS-004",
+  "summary": "Prueba de punta a punta (orders.journey.spec.ts) del recorrido Lista de pedidos → Nuevo pedido → Detalle del pedido → Enviar pedido → Detalle del pedido, con router real, rutas hijas reales, componentes y casos de uso reales y un doble con estado del puerto del repositorio. Incluye variantes Cancelar y fallo 422.",
+  "criteria": [
+    {
+      "id": "AC-24",
+      "status": "covered",
+      "note": "orders.journey.spec.ts: Nuevo pedido → Crear pedido (POST, Idempotency-Key, aviso «Pedido creado.») → /pedidos/:id → Confirmar → Enviar abre diálogo → Enviar pedido (ship, cierra, «Pedido enviado.») → mismo detalle recargado con Estado Enviado. Para poder enviar hubo que confirmar antes (el pedido nace pending y Enviar solo se pulsa desde confirmed): paso no nombrado en el recorrido de la spec."
+    }
+  ],
+  "requirements": [
+    {
+      "id": "R4-ARQ-1",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/orders/orders.journey.spec.ts · el recorrido comprueba que create recibe una Idempotency-Key (string)"
+    },
+    {
+      "id": "R4-ARQ-2",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/orders/orders.journey.spec.ts · el recorrido comprueba Enviar desactivado en Pendiente y Marcar como entregado activo en Enviado"
+    },
+    {
+      "id": "R4-ARQ-3",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/orders/orders.journey.spec.ts · el recorrido solo usa el puerto del repositorio (contrato HTTP de /api)"
+    },
+    {
+      "id": "R4-ARQ-4",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/orders/orders.journey.spec.ts · el recorrido no toca ninguna base de datos: solo el puerto del repositorio"
+    },
+    {
+      "id": "R4-ARQ-5",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/orders/orders.journey.spec.ts · sin cambios de forma en /api: el doble respeta el contrato"
+    },
+    {
+      "id": "R4-ARQ-6",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/orders/orders.journey.spec.ts · el doble del backend decide si el pedido se puede confirmar/enviar (409/422); el frontend no lo presupone"
+    },
+    {
+      "id": "R4-ARQ-7",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/orders/orders.journey.spec.ts · el doble del backend decide; el spec no calcula reglas de negocio"
+    },
+    {
+      "id": "R4-ARQ-8",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/orders/orders.journey.spec.ts · el estado del pedido vive en el doble del backend y cada pantalla lo vuelve a pedir (repo.get x3)"
+    },
+    {
+      "id": "R4-ARQ-9",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/orders/orders.journey.spec.ts · la lista y el detalle se piden de nuevo al servidor en cada entrada (expect repo.get 3 veces)"
+    },
+    {
+      "id": "R4-PRUEBAS-1",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-2",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-3",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-4",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-5",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-6",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-7",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-8",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-9",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-10",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-11",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-12",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-13",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/orders/orders.journey.spec.ts · AC-24 cubierto por el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-14",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-15",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-16",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/orders/orders.journey.spec.ts · npm test (332 pruebas) y npm run build en verde"
+    },
+    {
+      "id": "R4-SEG-1",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/orders/orders.journey.spec.ts · el spec no escribe secretos"
+    },
+    {
+      "id": "R4-SEG-2",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/orders/orders.journey.spec.ts · el spec no escribe secretos ni tokens"
+    },
+    {
+      "id": "R4-SEG-3",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-SEG-4",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-SEG-5",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-SEG-6",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-SEG-7",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-SEG-8",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-SEG-9",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-SEG-10",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-REND-1",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/orders/orders.journey.spec.ts · el estado del pedido vive en el doble del backend"
+    },
+    {
+      "id": "R4-REND-2",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/orders/orders.journey.spec.ts · la lista y el detalle se piden de nuevo al servidor en cada entrada"
+    },
+    {
+      "id": "R4-OBS-1",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-H3-UX-PEDIDOS-001..003 y APIs); este WI solo añade el recorrido"
+    }
+  ],
+  "testsRun": [
+    {
+      "name": "orders.journey.spec.ts",
+      "result": "pass"
+    },
+    {
+      "name": "suite completa (25 ficheros, 332 pruebas)",
+      "result": "pass"
+    }
+  ],
+  "deviations": [
+    {
+      "description": "El recorrido incluye un paso «Confirmar» entre el Detalle recién creado y «Enviar».",
+      "reason": "El pedido se crea en pending y «Enviar» solo se puede pulsar con Estado «Confirmado» (R4-ARQ-2); sin confirmar, el recorrido de la spec no se puede completar.",
+      "respondeA": "spec"
+    }
+  ],
+  "dodSelfAssessment": {
+    "met": true,
+    "blockers": []
+  },
+  "evidence": [
+    {
+      "type": "test_results",
+      "ref": ".sdd/evidence/WI-H3-UX-PEDIDOS-004/test-results.txt",
+      "note": "La prueba de punta a punta de cada recorrido, en verde (salida real de npm test con cobertura)"
+    }
+  ],
+  "clarificationRequests": [
+    {
+      "question": "¿El recorrido debe incluir «Confirmar» antes de «Enviar»?",
+      "blocking": false,
+      "context": "§2 (recorrido) lleva de Detalle a Enviar pedido, pero §2 pantalla /pedidos/:id exige Estado=confirmed para Enviar y POST /api/orders crea en pending. Decidí añadir Confirmar."
+    }
+  ],
+  "usoDelPack": {
+    "usadas": [
+      "§1",
+      "§2",
+      "§4",
+      "§8",
+      "§11"
+    ],
+    "noSirvieron": [
+      "§4-bis (constitución: nada aplicable a una prueba e2e)",
+      "§10"
+    ],
+    "falto": [
+      {
+        "que": "Convenciones (§7) recortadas por presupuesto: cómo se estructura la prueba e2e",
+        "dondeLoEncontro": "frontend/src/app/feature/clients/clients.routes.spec.ts (WI anterior) y los specs de orders"
+      },
+      {
+        "que": "Selectores/textos reales de los componentes (ids de campos, botones)",
+        "dondeLoEncontro": "HTML de los componentes de orders en el repo"
+      }
+    ]
+  }
+}
