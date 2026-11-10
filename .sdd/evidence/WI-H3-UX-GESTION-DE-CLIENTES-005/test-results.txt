@@ -1,0 +1,56 @@
+
+> frontend@0.0.0 test
+> ng test --coverage --coverage-reporters=text --coverage-reporters=json-summary --watch=false
+
+❯ Building...
+✔ Building...
+Initial chunk files                                                      | Names                                                                 |  Raw size
+init-testbed.js                                                          | init-testbed                                                          |   1.21 kB | 
+vitest-mock-patch.js                                                     | vitest-mock-patch                                                     | 974 bytes | 
+styles.css                                                               | styles                                                                |  56 bytes | 
+
+                                                                         | Initial total                                                         | 227.17 kB
+
+Lazy chunk files                                                         | Names                                                                 |  Raw size
+
+Application bundle generation complete. [1.542 seconds] - 2026-11-10T02:01:09.441Z
+
+
+ RUN  v4.1.12 /Users/jcoboc/Desktop/ProyectosClaude/prueba-punta-a-punta-green-h3/frontend
+      Coverage enabled with v8
+
+
+ Test Files  15 passed (15)
+      Tests  174 passed (174)
+   Start at  21:01:09
+   Duration  3.25s (transform 876ms, setup 5.50s, import 2.31s, tests 2.22s, environment 21.33s)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   98.52 |    93.77 |   98.63 |   99.86 |                   
+ app               |     100 |    91.66 |     100 |     100 |                   
+  app.html         |     100 |       50 |     100 |     100 | 1                 
+ ...infrastructure |     100 |    93.87 |     100 |     100 |                   
+  ...translator.ts |     100 |     87.5 |     100 |     100 | 17,27,35          
+ ...ustomer-create |   98.85 |    96.15 |     100 |     100 |                   
+  ....component.ts |   97.05 |       94 |     100 |     100 | 126-138           
+ ...ustomer-detail |   99.44 |     85.5 |     100 |     100 |                   
+  ...omponent.html |     100 |    76.92 |     100 |     100 | 2-46              
+  ....component.ts |   98.38 |    90.69 |     100 |     100 | 33,43-44,79       
+ .../customer-edit |      97 |    92.72 |     100 |   99.57 |                   
+  ...omponent.html |   97.83 |    97.36 |     100 |   99.03 | 32                
+  ....component.ts |   95.97 |    90.27 |     100 |     100 | ...78,213-225,257 
+ .../customer-list |   98.42 |    97.72 |    90.9 |     100 |                   
+  ...omponent.html |   97.88 |     87.5 |      75 |     100 | 47                
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 98.52% ( 1136/1153 )
+Branches     : 93.77% ( 392/418 )
+Functions    : 98.63% ( 144/146 )
+Lines        : 99.86% ( 734/735 )
+================================================================================
+Node.js version v23.11.0 detected.
+Odd numbered Node.js versions will not enter LTS status and should not be used for production. For more information, please see https://nodejs.org/en/about/previous-releases/.

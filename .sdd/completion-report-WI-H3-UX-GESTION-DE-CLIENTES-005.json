@@ -1,0 +1,262 @@
+{
+  "schemaVersion": 6,
+  "workItemCode": "WI-H3-UX-GESTION-DE-CLIENTES-005",
+  "summary": "Prueba de punta a punta (clients.routes.spec.ts) del recorrido Lista → Detalle → Confirmar eliminación → Lista con router real, rutas hijas reales de la feature, componentes y casos de uso reales y un doble con estado del puerto del repositorio. Incluye variantes Cancelar y fallo 409.",
+  "criteria": [
+    {
+      "id": "AC-25",
+      "status": "covered",
+      "note": "clients.routes.spec.ts: Ver detalle → /clientes/:id, abre diálogo, DELETE solo del id, cierra, avisa «Cliente eliminado.», vuelve a /clientes y la lista ya no tiene al cliente"
+    }
+  ],
+  "requirements": [
+    {
+      "id": "R4-ARQ-1",
+      "status": "no_aplica",
+      "evidencia": "Pantallas crear/editar: otros work items del package"
+    },
+    {
+      "id": "R4-ARQ-2",
+      "status": "no_aplica",
+      "evidencia": "Pantallas crear/editar: otros work items del package"
+    },
+    {
+      "id": "R4-ARQ-3",
+      "status": "no_aplica",
+      "evidencia": "Pantallas crear/editar: otros work items del package"
+    },
+    {
+      "id": "R4-ARQ-4",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/clients/clients.routes.spec.ts: el recorrido solo usa el puerto del repositorio; el estado vive en el doble de backend y la lista se vuelve a pedir tras borrar"
+    },
+    {
+      "id": "R4-ARQ-5",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/clients/clients.routes.spec.ts: el recorrido solo usa el puerto del repositorio; el estado vive en el doble de backend y la lista se vuelve a pedir tras borrar"
+    },
+    {
+      "id": "R4-ARQ-6",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/clients/clients.routes.spec.ts: el recorrido solo usa el puerto del repositorio; el estado vive en el doble de backend y la lista se vuelve a pedir tras borrar"
+    },
+    {
+      "id": "R4-ARQ-7",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/clients/clients.routes.spec.ts: el recorrido solo usa el puerto del repositorio; el estado vive en el doble de backend y la lista se vuelve a pedir tras borrar"
+    },
+    {
+      "id": "R4-ARQ-8",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/clients/clients.routes.spec.ts: el recorrido solo usa el puerto del repositorio; el estado vive en el doble de backend y la lista se vuelve a pedir tras borrar"
+    },
+    {
+      "id": "R4-ARQ-9",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/clients/clients.routes.spec.ts: el recorrido solo usa el puerto del repositorio; el estado vive en el doble de backend y la lista se vuelve a pedir tras borrar"
+    },
+    {
+      "id": "R4-ARQ-10",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/clients/clients.routes.spec.ts: el recorrido solo usa el puerto del repositorio; el estado vive en el doble de backend y la lista se vuelve a pedir tras borrar"
+    },
+    {
+      "id": "R4-PRUEBAS-1",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-001, WI-002); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-2",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-001, WI-002); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-3",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-001, WI-002); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-4",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-001, WI-002); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-5",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-001, WI-002); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-6",
+      "status": "no_aplica",
+      "evidencia": "Lo cubren los specs de cada pantalla/endpoint (WI-001, WI-002); este WI solo añade el recorrido"
+    },
+    {
+      "id": "R4-PRUEBAS-7",
+      "status": "no_aplica",
+      "evidencia": "Pantallas crear/editar: otros work items del package"
+    },
+    {
+      "id": "R4-PRUEBAS-8",
+      "status": "no_aplica",
+      "evidencia": "Pantallas crear/editar: otros work items del package"
+    },
+    {
+      "id": "R4-PRUEBAS-9",
+      "status": "no_aplica",
+      "evidencia": "Pantallas crear/editar: otros work items del package"
+    },
+    {
+      "id": "R4-PRUEBAS-10",
+      "status": "no_aplica",
+      "evidencia": "Pantallas crear/editar: otros work items del package"
+    },
+    {
+      "id": "R4-PRUEBAS-11",
+      "status": "no_aplica",
+      "evidencia": "Pantallas crear/editar: otros work items del package"
+    },
+    {
+      "id": "R4-PRUEBAS-12",
+      "status": "no_aplica",
+      "evidencia": "Pantallas crear/editar: otros work items del package"
+    },
+    {
+      "id": "R4-PRUEBAS-13",
+      "status": "no_aplica",
+      "evidencia": "Pantallas crear/editar: otros work items del package"
+    },
+    {
+      "id": "R4-PRUEBAS-14",
+      "status": "no_aplica",
+      "evidencia": "Pantallas crear/editar: otros work items del package"
+    },
+    {
+      "id": "R4-PRUEBAS-15",
+      "status": "no_aplica",
+      "evidencia": "Pantallas crear/editar: otros work items del package"
+    },
+    {
+      "id": "R4-PRUEBAS-16",
+      "status": "no_aplica",
+      "evidencia": "Pantallas crear/editar: otros work items del package"
+    },
+    {
+      "id": "R4-PRUEBAS-17",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/clients/clients.routes.spec.ts: AC-25 con prueba de punta a punta"
+    },
+    {
+      "id": "R4-PRUEBAS-18",
+      "status": "no_aplica",
+      "evidencia": "Endpoints: los prueban sus work items"
+    },
+    {
+      "id": "R4-PRUEBAS-19",
+      "status": "no_aplica",
+      "evidencia": "Estados de pantalla: los cubren los specs de cada pantalla"
+    },
+    {
+      "id": "R4-PRUEBAS-20",
+      "status": "cumple",
+      "evidencia": "npm ci, tests (15 ficheros, 174 pass) y build en verde; ng serve sin 5xx en /, /clientes, /clientes/muestra"
+    },
+    {
+      "id": "R4-SEG-1",
+      "status": "no_aplica",
+      "evidencia": "Backend/guard: fuera de este work item"
+    },
+    {
+      "id": "R4-SEG-2",
+      "status": "no_aplica",
+      "evidencia": "Backend/guard: fuera de este work item"
+    },
+    {
+      "id": "R4-SEG-3",
+      "status": "no_aplica",
+      "evidencia": "Backend/guard: fuera de este work item"
+    },
+    {
+      "id": "R4-SEG-4",
+      "status": "no_aplica",
+      "evidencia": "Validación de servidor: backend"
+    },
+    {
+      "id": "R4-SEG-5",
+      "status": "cumple",
+      "evidencia": "La prueba no escribe datos personales en logs"
+    },
+    {
+      "id": "R4-SEG-6",
+      "status": "no_aplica",
+      "evidencia": "El 401 de cada pantalla lo cubren sus specs"
+    },
+    {
+      "id": "R4-REND-1",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/clients/clients.routes.spec.ts: tras borrar, la lista vuelve a pedir al servidor (list 2 veces) y ya no muestra el cliente"
+    },
+    {
+      "id": "R4-REND-2",
+      "status": "cumple",
+      "evidencia": "frontend/src/app/feature/clients/clients.routes.spec.ts: tras borrar, la lista vuelve a pedir al servidor (list 2 veces) y ya no muestra el cliente"
+    },
+    {
+      "id": "R4-OBS-1",
+      "status": "cumple",
+      "evidencia": "Sin logs en el código añadido"
+    }
+  ],
+  "testsRun": [
+    {
+      "name": "clients.routes.spec.ts",
+      "result": "pass"
+    },
+    {
+      "name": "suite completa (15 ficheros, 174 tests)",
+      "result": "pass"
+    }
+  ],
+  "deviations": [
+    {
+      "description": "El doble está en el puerto del repositorio, no en HTTP, y las rutas se montan con proveedores de prueba (children reales de clientsRoutes)",
+      "reason": "Los providers de ruta de la feature crean un HttpClient propio que impediría sustituir el backend; se conservan las rutas hijas y su orden",
+      "respondeA": "otra"
+    }
+  ],
+  "dodSelfAssessment": {
+    "met": true,
+    "blockers": []
+  },
+  "evidence": [
+    {
+      "type": "test_results",
+      "ref": ".sdd/evidence/WI-H3-UX-GESTION-DE-CLIENTES-005/test-results.txt",
+      "note": "La prueba de punta a punta de cada recorrido, en verde"
+    }
+  ],
+  "clarificationRequests": [],
+  "usoDelPack": {
+    "usadas": [
+      "§1",
+      "§2",
+      "§4",
+      "§7",
+      "§8",
+      "§11"
+    ],
+    "noSirvieron": [
+      "§4 R4-PRUEBAS-7..16 y §2 de crear/editar (otras pantallas)",
+      "§4-bis LRN-e50bacb3 (formularios multi-paso)"
+    ],
+    "falto": [
+      {
+        "que": "Cómo montar el recorrido sin HTTP real (qué se dobla) y cómo comprobar los avisos tras navegar",
+        "dondeLoEncontro": "Código del repo: clients.routes.ts, NoticeService y specs existentes"
+      },
+      {
+        "que": "El comprobar.js del repo era de una versión anterior del plan (otras rutas, 400 en el arranque)",
+        "dondeLoEncontro": "Lo comparé con sdd_mcp_get_verification_plan y verifiqué las 3 rutas del plan con fetch a ng serve"
+      }
+    ]
+  }
+}
