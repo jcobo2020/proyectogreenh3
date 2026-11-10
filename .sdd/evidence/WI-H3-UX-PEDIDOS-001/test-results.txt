@@ -1,0 +1,108 @@
+
+> frontend@0.0.0 test
+> ng test --coverage --coverage-reporters=text --watch=false
+
+Node.js version v23.11.0 detected.
+Odd numbered Node.js versions will not enter LTS status and should not be used for production. For more information, please see https://nodejs.org/en/about/previous-releases/.
+❯ Building...
+✔ Building...
+Initial chunk files                                                      | Names                                                                 |  Raw size
+chunk-2BBCKO55.js                                                        | -                                                                     |  40.98 kB | 
+chunk-AKTSVUKJ.js                                                        | -                                                                     |  33.52 kB | 
+chunk-AZUWOFI6.js                                                        | -                                                                     |  23.43 kB | 
+chunk-MV56VBRQ.js                                                        | -                                                                     |  22.63 kB | 
+chunk-VFS7SYMS.js                                                        | -                                                                     |  21.00 kB | 
+spec-app-feature-clients-ui-customer-edit-customer-edit.component.js     | spec-app-feature-clients-ui-customer-edit-customer-edit.component     |  15.74 kB | 
+spec-app-feature-clients-ui-customer-create-customer-create.component.js | spec-app-feature-clients-ui-customer-create-customer-create.component |  13.65 kB | 
+spec-app-feature-orders-ui-order-list-order-list.component.js            | spec-app-feature-orders-ui-order-list-order-list.component            |   8.81 kB | 
+spec-app-feature-clients-ui-customer-detail-customer-detail.component.js | spec-app-feature-clients-ui-customer-detail-customer-detail.component |   8.77 kB | 
+spec-app-feature-clients-ui-customer-list-customer-list.component.js     | spec-app-feature-clients-ui-customer-list-customer-list.component     |   7.76 kB | 
+spec-app-feature-clients-infrastructure-http-repositories.js             | spec-app-feature-clients-infrastructure-http-repositories             |   7.32 kB | 
+spec-app-feature-clients-clients.routes.js                               | spec-app-feature-clients-clients.routes                               |   6.94 kB | 
+chunk-EUVUSW6V.js                                                        | -                                                                     |   6.13 kB | 
+spec-app-app.js                                                          | spec-app-app                                                          |   5.25 kB | 
+spec-app-feature-orders-infrastructure-http-repositories.js              | spec-app-feature-orders-infrastructure-http-repositories              |   5.06 kB | 
+chunk-RSTWSNOR.js                                                        | -                                                                     |   4.75 kB | 
+spec-app-feature-clients-infrastructure-http-customer-edit.repository.js | spec-app-feature-clients-infrastructure-http-customer-edit.repository |   3.85 kB | 
+chunk-S4NC6GXM.js                                                        | -                                                                     |   3.77 kB | 
+spec-app-feature-clients-application-customer.use-cases.js               | spec-app-feature-clients-application-customer.use-cases               |   3.74 kB | 
+chunk-ZYWIPJIY.js                                                        | -                                                                     |   2.58 kB | 
+spec-app-@core-interceptors-jwt.interceptor.js                           | spec-app-@core-interceptors-jwt.interceptor                           |   2.44 kB | 
+spec-app-feature-orders-orders.routes.js                                 | spec-app-feature-orders-orders.routes                                 |   2.18 kB | 
+chunk-UVICEL6O.js                                                        | -                                                                     |   2.04 kB | 
+chunk-YKO6STF3.js                                                        | -                                                                     |   2.01 kB | 
+chunk-VNISSCF2.js                                                        | -                                                                     |   2.00 kB | 
+spec-app-feature-clients-infrastructure-http-town.repository.js          | spec-app-feature-clients-infrastructure-http-town.repository          |   1.92 kB | 
+spec-app-feature-clients-application-customer-edit.use-cases.js          | spec-app-feature-clients-application-customer-edit.use-cases          |   1.74 kB | 
+chunk-5ZVI5GO2.js                                                        | -                                                                     |   1.74 kB | 
+spec-app-@core-guards-auth.guard.js                                      | spec-app-@core-guards-auth.guard                                      |   1.69 kB | 
+spec-app-feature-orders-application-order.use-cases.js                   | spec-app-feature-orders-application-order.use-cases                   |   1.62 kB | 
+chunk-AY6SKEOY.js                                                        | -                                                                     |   1.41 kB | 
+init-testbed.js                                                          | init-testbed                                                          |   1.21 kB | 
+chunk-PD2M6UBR.js                                                        | -                                                                     |   1.17 kB | 
+spec-app-@core-guards-permissions.js                                     | spec-app-@core-guards-permissions                                     |   1.12 kB | 
+chunk-IIVUNF7P.js                                                        | -                                                                     |   1.09 kB | 
+chunk-PQV3HZY4.js                                                        | -                                                                     |   1.02 kB | 
+vitest-mock-patch.js                                                     | vitest-mock-patch                                                     | 974 bytes | 
+chunk-PITDMJJY.js                                                        | -                                                                     | 938 bytes | 
+chunk-64RLZZ6Z.js                                                        | -                                                                     | 902 bytes | 
+chunk-G63CHGOU.js                                                        | -                                                                     | 712 bytes | 
+spec-app-@core-services-notice.service.js                                | spec-app-@core-services-notice.service                                | 599 bytes | 
+spec-app-@core-guards-pending-changes.guard.js                           | spec-app-@core-guards-pending-changes.guard                           | 589 bytes | 
+chunk-3VLYKYG3.js                                                        | -                                                                     | 504 bytes | 
+chunk-7TYJ62YS.js                                                        | -                                                                     | 425 bytes | 
+chunk-NWLB6ZMV.js                                                        | -                                                                     | 338 bytes | 
+chunk-ROLHRMNJ.js                                                        | -                                                                     | 262 bytes | 
+chunk-VGYXMD5O.js                                                        | -                                                                     | 242 bytes | 
+chunk-AQAPMIMI.js                                                        | -                                                                     | 190 bytes | 
+styles.css                                                               | styles                                                                |  56 bytes | 
+
+                                                                         | Initial total                                                         | 278.83 kB
+
+Lazy chunk files                                                         | Names                                                                 |  Raw size
+chunk-NQBPSFFH.js                                                        | clients-routes                                                        | 636 bytes | 
+chunk-WQXBRVG7.js                                                        | orders-routes                                                         | 394 bytes | 
+
+Application bundle generation complete. [1.556 seconds] - 2026-11-10T02:06:28.865Z
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.12 [39m[90m/Users/jcoboc/Desktop/ProyectosClaude/prueba-punta-a-punta-green-h3/frontend[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+
+[2m Test Files [22m [1m[32m20 passed[39m[22m[90m (20)[39m
+[2m      Tests [22m [1m[32m213 passed[39m[22m[90m (213)[39m
+[2m   Start at [22m 21:06:29
+[2m   Duration [22m 3.27s[2m (transform 873ms, setup 6.06s, import 2.81s, tests 2.95s, environment 28.19s)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   98.59 |     94.5 |    97.9 |   99.88 |                   
+ app               |     100 |    91.66 |     100 |     100 |                   
+  app.html         |     100 |       50 |     100 |     100 | 1                 
+ ...infrastructure |     100 |    93.87 |     100 |     100 |                   
+  ...translator.ts |     100 |     87.5 |     100 |     100 | 17,27,35          
+ ...ustomer-create |   98.85 |    96.15 |     100 |     100 |                   
+  ....component.ts |   97.05 |       94 |     100 |     100 | 126-138           
+ ...ustomer-detail |   99.44 |     85.5 |     100 |     100 |                   
+  ...omponent.html |     100 |    76.92 |     100 |     100 | 2-46              
+  ....component.ts |   98.38 |    90.69 |     100 |     100 | 33,43-44,79       
+ .../customer-edit |      97 |    92.72 |     100 |   99.57 |                   
+  ...omponent.html |   97.83 |    97.36 |     100 |   99.03 | 32                
+  ....component.ts |   95.97 |    90.27 |     100 |     100 | ...78,213-225,257 
+ .../customer-list |   98.42 |    97.72 |    90.9 |     100 |                   
+  ...omponent.html |   97.88 |     87.5 |      75 |     100 | 47                
+ ...infrastructure |     100 |    95.83 |     100 |     100 |                   
+  ...translator.ts |     100 |     87.5 |     100 |     100 | 12                
+ .../ui/order-list |   98.44 |    98.07 |    90.9 |     100 |                   
+  ...omponent.html |   97.82 |    91.66 |   71.42 |     100 | 37                
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 98.59% ( 1404/1424 )
+Branches     : 94.5% ( 482/510 )
+Functions    : 97.9% ( 187/191 )
+Lines        : 99.88% ( 893/894 )
+================================================================================

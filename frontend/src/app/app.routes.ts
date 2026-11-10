@@ -8,4 +8,9 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadChildren: () => import('./feature/clients/clients.routes').then((m) => m.clientsRoutes),
   },
+  {
+    path: 'pedidos',
+    canActivate: [authGuard],
+    loadChildren: () => import('./feature/orders/orders.routes').then((m) => m.ordersRoutes),
+  },
 ];

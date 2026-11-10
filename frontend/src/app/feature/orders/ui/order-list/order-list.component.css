@@ -1,0 +1,12 @@
+.pedidos { max-width: 960px; margin: 0 auto; padding: 1rem; font-family: sans-serif; }
+.pedidos__cabecera { display: flex; justify-content: space-between; align-items: center; }
+.pedidos__filtros { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0; }
+.pedidos__filtros label { display: flex; flex-direction: column; gap: 0.25rem; }
+.pedidos__tabla { width: 100%; border-collapse: collapse; }
+.pedidos__tabla th, .pedidos__tabla td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #ddd; }
+.pedidos__tabla .pedidos__importe { text-align: right; }
+.pedidos__paginacion { display: flex; gap: 1rem; align-items: center; justify-content: center; margin-top: 1rem; }
+.boton { padding: 0.4rem 0.8rem; border: 1px solid #888; border-radius: 4px; background: #fff; color: inherit; text-decoration: none; cursor: pointer; }
+.boton--primario { background: #1a5fb4; color: #fff; border-color: #1a5fb4; }
+.boton--discreto { border-color: transparent; }
+.solo-lectores { position: absolute; left: -9999px; }

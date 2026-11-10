@@ -1,0 +1,101 @@
+<section class="pedidos">
+  <header class="pedidos__cabecera">
+    <h1>Pedidos</h1>
+    <a class="boton boton--primario" routerLink="/pedidos/nuevo">
+      <span aria-hidden="true">+</span> Nuevo pedido
+    </a>
+  </header>
+
+  <form class="pedidos__filtros" (submit)="$event.preventDefault()">
+    <label>
+      Cliente
+      <select name="customerId" [value]="filters().customerId" (change)="setFilter('customerId', $any($event.target).value)">
+        <option value="">Todos</option>
+        @for (customer of customers(); track customer.id) {
+          <option [value]="customer.id" [selected]="customer.id === filters().customerId">{{ customer.name }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Estado
+      <select name="status" [value]="filters().status" (change)="setFilter('status', $any($event.target).value)">
+        <option value="">Todos</option>
+        @for (status of statuses; track status.value) {
+          <option [value]="status.value" [selected]="status.value === filters().status">{{ status.label }}</option>
+        }
+      </select>
+    </label>
+  </form>
+
+  @if (customersFailed()) {
+    <p class="pedidos__aviso" role="alert">
+      No se pudo cargar. Vuelve a intentarlo.
+      <button type="button" class="boton" (click)="loadCustomers()">Reintentar</button>
+    </p>
+  }
+
+  @switch (state()) {
+    @case ('loading') {
+      <p role="status">Cargando…</p>
+    }
+    @case ('empty') {
+      <p role="status">No hay datos que mostrar.</p>
+    }
+    @case ('error') {
+      <p role="alert">
+        No se pudo cargar. Vuelve a intentarlo.
+        <button type="button" class="boton" (click)="loadOrders()">Reintentar</button>
+      </p>
+    }
+    @case ('noAccess') {
+      <p role="alert">No tienes permiso para ver esto.</p>
+    }
+    @case ('invalid') {
+      <p role="alert">Revisa los datos marcados.</p>
+    }
+    @case ('forbidden') {
+      <p role="alert">No tienes permiso para hacer esto.</p>
+    }
+    @case ('session') {
+      <p role="alert">
+        Tu sesión terminó: vuelve a entrar.
+        <a class="boton" [href]="loginHref">Entrar</a>
+      </p>
+    }
+    @case ('data') {
+      <table class="pedidos__tabla">
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Cliente</th>
+            <th>Fecha</th>
+            <th class="pedidos__importe">Importe</th>
+            <th>Estado</th>
+            <th><span class="solo-lectores">Acciones</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (order of orders(); track order.id) {
+            <tr>
+              <td>{{ order.number }}</td>
+              <td>{{ order.customerName }}</td>
+              <td>{{ order.date | date: 'dd/MM/yyyy' }}</td>
+              <td class="pedidos__importe">{{ order.amount | number: '1.2-2' }}</td>
+              <td>{{ statusLabel(order.status) }}</td>
+              <td>
+                <a class="boton boton--discreto" [routerLink]="['/pedidos', order.id]" aria-label="Ver detalle" title="Ver detalle">
+                  <span aria-hidden="true">👁</span>
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <nav class="pedidos__paginacion" aria-label="Paginación">
+        <button type="button" class="boton" [disabled]="page() <= 1" (click)="goToPage(page() - 1)">Anterior</button>
+        <span>Página {{ page() }} de {{ totalPages() }} · {{ total() }} pedidos</span>
+        <button type="button" class="boton" [disabled]="page() >= totalPages()" (click)="goToPage(page() + 1)">Siguiente</button>
+      </nav>
+    }
+  }
+</section>

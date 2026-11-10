@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 6,
+  "workItemCode": "WI-H3-UX-PEDIDOS-001",
+  "summary": "Pantalla /pedidos (feature orders por capas domain/application/infrastructure/ui): tabla con número, cliente, fecha, importe y estado, filtros por cliente (GET /api/customers) y estado, paginación de 20, y los estados cargando, vacío, error, sin permiso, 400, 401 y 403, con «Nuevo pedido» → /pedidos/nuevo y «Ver detalle» → /pedidos/:id. Ruta lazy 'pedidos' con authGuard. Pruebas de componente, repositorios, casos de uso, interceptor y rutas.",
+  "criteria": [
+    { "id": "AC-01", "status": "covered", "note": "order-list.component.spec.ts: columnas, filtros customerId/status con vuelta a página 1, paginación; [act_opc_x6hq6ze7], [act_cargar_oas4tpe4], [nav_iyhphumc], [nav_2ei9j4j0]" },
+    { "id": "AC-02", "status": "covered", "note": "order-list.component.spec.ts: «Cargando…»" },
+    { "id": "AC-03", "status": "covered", "note": "order-list.component.spec.ts: «No hay datos que mostrar.»" },
+    { "id": "AC-04", "status": "covered", "note": "order-list.component.spec.ts: «No se pudo cargar. Vuelve a intentarlo.» con reintento" },
+    { "id": "AC-05", "status": "partial", "note": "«No tienes permiso para ver esto.» se muestra si la sesión (claim `permissions` del token) declara permisos y falta «pedidos.consultar»; el pack no define de dónde sale el permiso de sesión, el claim es una suposición (ver clarificationRequests)" },
+    { "id": "AC-06", "status": "covered", "note": "order-list.component.spec.ts y http-repositories.spec.ts: 400 → «Revisa los datos marcados.»" },
+    { "id": "AC-07", "status": "covered", "note": "order-list.component.spec.ts y http-repositories.spec.ts: 401 → «Tu sesión terminó: vuelve a entrar.» con enlace a login; el interceptor limpia la sesión" },
+    { "id": "AC-08", "status": "covered", "note": "order-list.component.spec.ts y http-repositories.spec.ts: 403 → «No tienes permiso para hacer esto.»" }
+  ],
+  "requirements": [
+    { "id": "R4-ARQ-1", "status": "no_aplica", "evidencia": "Crear pedido es de otro work item del package" },
+    { "id": "R4-ARQ-2", "status": "no_aplica", "evidencia": "Detalle del pedido es de otro work item del package" },
+    { "id": "R4-ARQ-3", "status": "cumple", "evidencia": "frontend/src/app/feature/orders/infrastructure/http-order.repository.ts:17 · http-repositories.spec.ts" },
+    { "id": "R4-ARQ-4", "status": "cumple", "evidencia": "feature/orders: solo HttpClient hacia /api" },
+    { "id": "R4-ARQ-5", "status": "cumple", "evidencia": "http-order.repository.ts y http-customer-option.repository.ts siguen el contrato de §2" },
+    { "id": "R4-ARQ-6", "status": "cumple", "evidencia": "order-list.component.ts: el frontend no calcula reglas de negocio" },
+    { "id": "R4-ARQ-7", "status": "cumple", "evidencia": "order-list.component.ts: no calcula ni presupone nada del negocio" },
+    { "id": "R4-ARQ-8", "status": "cumple", "evidencia": "el estado del pedido solo se lee del backend (OrderListItem.status)" },
+    { "id": "R4-ARQ-9", "status": "cumple", "evidencia": "order-list.component.ts: cada filtro o página vuelve a pedir a la API, sin caché · order-list.component.spec.ts" },
+    { "id": "R4-PRUEBAS-1", "status": "cumple", "evidencia": "order-list.component.spec.ts: cargando, vacío, error, sin permiso; enlaces a /pedidos/nuevo y /pedidos/:id" },
+    { "id": "R4-PRUEBAS-2", "status": "cumple", "evidencia": "http-repositories.spec.ts: GET /api/customers 200, 401, 400" },
+    { "id": "R4-PRUEBAS-3", "status": "cumple", "evidencia": "http-repositories.spec.ts: GET /api/orders 200, 401, 403, 400" },
+    { "id": "R4-PRUEBAS-4", "status": "no_aplica", "evidencia": "/pedidos/nuevo es de otro work item" },
+    { "id": "R4-PRUEBAS-5", "status": "cumple", "evidencia": "order-list.component.spec.ts: si fallan los clientes ofrece reintentar (el bloqueo de «Crear pedido» es de /pedidos/nuevo)" },
+    { "id": "R4-PRUEBAS-6", "status": "no_aplica", "evidencia": "Crear pedido es de otro work item" },
+    { "id": "R4-PRUEBAS-7", "status": "no_aplica", "evidencia": "/pedidos/:id es de otro work item" },
+    { "id": "R4-PRUEBAS-8", "status": "no_aplica", "evidencia": "Enviar pedido es de otro work item" },
+    { "id": "R4-PRUEBAS-9", "status": "no_aplica", "evidencia": "Cancelar pedido es de otro work item" },
+    { "id": "R4-PRUEBAS-10", "status": "no_aplica", "evidencia": "Cargar el elemento es de otro work item" },
+    { "id": "R4-PRUEBAS-11", "status": "no_aplica", "evidencia": "Confirmar es de otro work item" },
+    { "id": "R4-PRUEBAS-12", "status": "no_aplica", "evidencia": "Marcar como entregado es de otro work item" },
+    { "id": "R4-PRUEBAS-13", "status": "cumple", "evidencia": "AC-01..AC-08 con prueba en order-list.component.spec.ts" },
+    { "id": "R4-PRUEBAS-14", "status": "cumple", "evidencia": "http-repositories.spec.ts: los endpoints de este work item en su caso feliz y cada error del contrato" },
+    { "id": "R4-PRUEBAS-15", "status": "cumple", "evidencia": "order-list.component.spec.ts: cargando, vacío, error, sin permiso y con datos" },
+    { "id": "R4-PRUEBAS-16", "status": "cumple", "evidencia": "node comprobar.js: npm ci, npm test, npm run build y arranque en verde" },
+    { "id": "R4-SEG-1", "status": "cumple", "evidencia": "ningún secreto en el código; el token sale de sessionStorage" },
+    { "id": "R4-SEG-2", "status": "cumple", "evidencia": "app.routes.ts: /pedidos con authGuard; jwtInterceptor envía el token" },
+    { "id": "R4-SEG-3", "status": "no_aplica", "evidencia": "Lo decide el backend; el frontend no filtra" },
+    { "id": "R4-SEG-4", "status": "no_aplica", "evidencia": "Validación en servidor: backend" },
+    { "id": "R4-SEG-5", "status": "cumple", "evidencia": "feature/orders no escribe logs" },
+    { "id": "R4-SEG-6", "status": "cumple", "evidencia": "order-list.component.ts: sin filtrar por quien entra; la API decide con 403" },
+    { "id": "R4-SEG-7", "status": "cumple", "evidencia": "order-list.component.ts: sin regla de «cada uno lo suyo»" },
+    { "id": "R4-SEG-8", "status": "cumple", "evidencia": "order-list.component.html: «No tienes permiso para ver esto.» · order-list.component.spec.ts" },
+    { "id": "R4-SEG-9", "status": "cumple", "evidencia": "order-list.component.spec.ts: 401 en la lista y en los clientes → «Tu sesión terminó: vuelve a entrar.»" },
+    { "id": "R4-SEG-10", "status": "no_aplica", "evidencia": "«Importe» mínimo 0.01 es de /pedidos/nuevo" },
+    { "id": "R4-REND-1", "status": "cumple", "evidencia": "el estado vive solo en el backend" },
+    { "id": "R4-REND-2", "status": "cumple", "evidencia": "sin cachés: cada carga va a GET /api/orders" },
+    { "id": "R4-OBS-1", "status": "cumple", "evidencia": "feature/orders no registra datos personales ni tokens" }
+  ],
+  "testsRun": [
+    { "name": "order-list.component.spec.ts", "result": "pass" },
+    { "name": "http-repositories.spec.ts (orders)", "result": "pass" },
+    { "name": "order.use-cases.spec.ts", "result": "pass" },
+    { "name": "orders.routes.spec.ts", "result": "pass" },
+    { "name": "permissions.spec.ts", "result": "pass" }
+  ],
+  "deviations": [
+    {
+      "description": "El select «Cliente» carga una sola página de GET /api/customers (page=1, pageSize=100).",
+      "reason": "El contrato pagina esa ruta y no ofrece una lista completa; con más de 100 clientes, los demás no aparecen como filtro.",
+      "respondeA": "spec"
+    }
+  ],
+  "dodSelfAssessment": {
+    "met": false,
+    "blockers": [
+      "AC-05: el origen del permiso «pedidos.consultar» en la sesión no está definido en el pack; se asume el claim `permissions` del token",
+      "Las capturas de /pedidos en cada estado las aporta una persona (screenshot)"
+    ]
+  },
+  "clarificationRequests": [
+    {
+      "question": "¿De dónde sale el permiso «pedidos.consultar» de la sesión?",
+      "blocking": false,
+      "context": "§2 dice «lo que dice la sesión de quien ha entrado», pero ni §2 ni §7 definen el formato del token. Asumí un claim `permissions` (lista de textos) en el payload del JWT; si no existe, solo el 403 de la API avisa."
+    },
+    {
+      "question": "¿Cómo distinguir «No tienes permiso para ver esto.» (AC-05) de «No tienes permiso para hacer esto.» (AC-08) cuando ambos vienen de un 403 de GET /api/orders?",
+      "blocking": false,
+      "context": "§2: AC-05 y AC-08 describen el mismo fallo con textos distintos. Decidí: 403 de la API → AC-08; falta del permiso en la sesión → AC-05."
+    }
+  ],
+  "evidence": [
+    { "type": "coverage_report", "ref": ".sdd/evidence/WI-H3-UX-PEDIDOS-001/coverage-summary.json", "note": "Reporte de cobertura ≥80% (total 98.59% sentencias; ficheros de orders y permissions entre 97.8% y 100%)" }
+  ],
+  "usoDelPack": {
+    "usadas": ["§1", "§1-bis", "§2", "§4", "§4-bis", "§7", "§8", "§10", "§11"],
+    "noSirvieron": ["§4: requisitos R4-PRUEBAS-4 a 12 y R4-ARQ-1/2 (otras pantallas)"],
+    "falto": [
+      { "que": "Formato del permiso de sesión y su relación con el 403 (AC-05 frente a AC-08)", "dondeLoEncontro": "no lo encontré; lo decidí yo" },
+      { "que": "comprobar.js trae rutas distintas por work item: el comprobar.js del repo era de otro WI (probaba /clientes/muestra/editar)", "dondeLoEncontro": "cambié la ruta a /pedidos en el comprobar.js local, que no se commitea" }
+    ]
+  }
+}
