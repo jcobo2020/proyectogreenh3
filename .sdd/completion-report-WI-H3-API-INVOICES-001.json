@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 6,
+  "workItemCode": "WI-H3-API-INVOICES-001",
+  "summary": "POST /api/invoices (alta idempotente con number F-AAAA-NNNNNN por contador anual en la misma transacción) y GET /api/invoices (paginada, filtro customerId, date desc con desempate por id, customerName con $lookup en una agregación). Modelo Invoice con sus índices, reutiliza IdempotencyKey y Counter, el cliente con facturas no se puede borrar (IN_USE), Swagger y 21 tests de contrato.",
+  "criteria": [
+    { "id": "AC-01", "status": "covered", "note": "invoices.test.ts «AC-01»: 201 con id, datos enviados, number y customerName" },
+    { "id": "AC-02", "status": "covered", "note": "400 con datos no válidos (detalles por campo), fecha futura, amount < 0.01, cuerpo no objeto, sin Idempotency-Key y clave de más de 255" },
+    { "id": "AC-03", "status": "covered", "note": "401 UNAUTHORIZED sin token y con token inválido" },
+    { "id": "AC-04", "status": "covered", "note": "422 BUSINESS_RULE con la misma clave y otro cuerpo; no crea nada" },
+    { "id": "AC-05", "status": "covered", "note": "400 VALIDATION_ERROR con customerId inexistente en POST" },
+    { "id": "AC-06", "status": "covered", "note": "replay: mismo 201 y cuerpo, Idempotent-Replayed true, sin duplicar; también 4xx repetido, clave por usuario y clave caducada" },
+    { "id": "AC-07", "status": "covered", "note": "dos envíos a la vez con la misma clave: una sola factura, ambas 201 con el mismo cuerpo y una con Idempotent-Replayed" },
+    { "id": "AC-08", "status": "covered", "note": "200 con filas insertadas desordenadas: date desc y a igualdad por id; filtro customerId, paginación y customerName leído al responder" },
+    { "id": "AC-09", "status": "covered", "note": "401 sin sesión en GET" },
+    { "id": "AC-10", "status": "covered", "note": "400 con page 0/'a', pageSize 0/101 y customerId no uuid" },
+    { "id": "AC-11", "status": "covered", "note": "400 con customerId inexistente en GET" },
+    { "id": "AC-12", "status": "covered", "note": "RN-01: dos cuentas, cada una ve las facturas de la otra" }
+  ],
+  "gates": [
+    { "businessRuleId": "RN-01", "status": "cumple", "note": "invoices.test.ts «RN-01: todos ven todo / AC-12»: user-A y user-B crean una factura cada uno y ambos las ven en GET /api/invoices; basta la sesión, sin permiso propio" }
+  ],
+  "requirements": [],
+  "testsRun": [
+    { "name": "invoices.test.ts", "result": "pass" },
+    { "name": "customers.test.ts", "result": "pass" },
+    { "name": "orders.test.ts", "result": "pass" },
+    { "name": "provinces.test.ts", "result": "pass" },
+    { "name": "towns.test.ts", "result": "pass" }
+  ],
+  "deviations": [
+    {
+      "description": "El alta valida el cuerpo dentro de la transacción de la clave (no en un middleware previo), igual que /api/orders, para guardar el 400 de datos y repetirlo con la misma clave.",
+      "reason": "§2 pide guardar la respuesta de un 4xx con la clave; la cabecera sí se valida antes en middleware (400 sin guardar, no hay clave que guardar).",
+      "respondeA": "spec"
+    }
+  ],
+  "dodSelfAssessment": { "met": true, "blockers": [] },
+  "clarificationRequests": [
+    {
+      "question": "El contador del number es por año de la FECHA de la factura (counter «invoice-AAAA»), no por año de creación. ¿Es lo previsto?",
+      "blocking": false,
+      "context": "§2 dice «el año de la factura» y «vuelve a 000001 cada año»; interpreté año de `date`."
+    },
+    {
+      "question": "«no posterior a hoy» se compara con la fecha UTC del servidor.",
+      "blocking": false,
+      "context": "§2 no fija la zona horaria."
+    }
+  ],
+  "evidence": [
+    { "type": "test_results", "ref": ".sdd/evidence/WI-H3-API-INVOICES-001/test-results.txt", "note": "Tests unitarios passing (invoices.test.ts, 21 tests; la suite completa: 129 pass)" },
+    { "type": "api_docs", "ref": "api/src/controllers/InvoiceController.ts", "note": "Endpoints documentados en Swagger" },
+    { "type": "migration_log", "ref": ".sdd/evidence/WI-H3-API-INVOICES-001/arranque.txt", "note": "Salida real del arranque de la API compilada con MongoDB en memoria (node comprobar.js)" },
+    { "type": "coverage_report", "ref": ".sdd/evidence/WI-H3-API-INVOICES-001/coverage-summary.json", "note": "Cobertura medida: 95.43% sentencias globales; ficheros de facturas al 100%" }
+  ],
+  "usoDelPack": {
+    "usadas": ["§1", "§2", "§3", "§4-bis", "§5", "§7", "§8", "§11"],
+    "noSirvieron": ["§1-bis (lista genérica)", "§4 (restricciones sin ids R4-)"],
+    "falto": []
+  }
+}

@@ -23,6 +23,9 @@ import {
 import { requirePermission } from '../middlewares/requirePermission.middleware';
 import { validateListOrders, validateShipOrder, validateCancelOrder } from '../validators/orderValidator';
 
+import { getInvoices, postInvoice } from '../controllers/InvoiceController';
+import { validateListInvoices } from '../validators/invoiceValidator';
+
 export const apiRouter = Router();
 
 const canView = requirePermission('pedidos.consultar');
@@ -36,6 +39,9 @@ apiRouter.post('/customers', authenticate, validateIdempotencyKey, postCustomer)
 apiRouter.get('/customers/:id', authenticate, validateIdParam, getCustomer);
 apiRouter.put('/customers/:id', authenticate, validateUpdateCustomer, putCustomer);
 apiRouter.delete('/customers/:id', authenticate, validateIdParam, removeCustomer);
+
+apiRouter.get('/invoices', authenticate, validateListInvoices, getInvoices);
+apiRouter.post('/invoices', authenticate, validateIdempotencyKey, postInvoice);
 
 apiRouter.get('/orders', authenticate, canView, validateListOrders, getOrders);
 apiRouter.post('/orders', authenticate, canManage, validateIdempotencyKey, postOrder);
