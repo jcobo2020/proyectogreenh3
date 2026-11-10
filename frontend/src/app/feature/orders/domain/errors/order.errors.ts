@@ -22,6 +22,14 @@ export class ForbiddenOrderError extends Error {
   }
 }
 
+/** 422: una regla del negocio (p. ej. la Idempotency-Key ya se usó con otro cuerpo). */
+export class OrderBusinessRuleError extends Error {
+  constructor() {
+    super('No se pudo por una regla del negocio.');
+    this.name = 'OrderBusinessRuleError';
+  }
+}
+
 /** Cualquier otro fallo (red, 5xx…). */
 export class OrderInfrastructureError extends Error {
   constructor() {

@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import {
   ForbiddenOrderError,
   InvalidOrderInputError,
+  OrderBusinessRuleError,
   OrderInfrastructureError,
   OrderSessionExpiredError,
 } from '../domain/errors/order.errors';
@@ -91,6 +92,37 @@ describe('HttpCustomerOptionRepository · GET /api/customers', () => {
     let error: unknown;
     clientes.list().subscribe({ error: (e) => (error = e) });
     http.expectOne((r) => r.url === '/api/customers').flush({}, { status, statusText: 'x' });
+    expect(error).toBeInstanceOf(clase);
+  });
+});
+
+describe('HttpOrderRepository · POST /api/orders', () => {
+  const nuevo = { customerId: 'c1', date: '2026-11-01', amount: 25.5 };
+
+  it('201: envía el cuerpo con Idempotency-Key y devuelve el pedido creado', () => {
+    const { http, pedidos } = preparar();
+    const creado = { id: 'o1', ...nuevo, status: 'pending' };
+    let resultado: unknown;
+    pedidos.create(nuevo, 'clave-1').subscribe((r) => (resultado = r));
+    const req = http.expectOne('/api/orders');
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual(nuevo);
+    expect(req.request.headers.get('Idempotency-Key')).toBe('clave-1');
+    req.flush(creado, { status: 201, statusText: 'Created' });
+    expect(resultado).toEqual(creado);
+  });
+
+  it.each([
+    [400, InvalidOrderInputError],
+    [401, OrderSessionExpiredError],
+    [403, ForbiddenOrderError],
+    [422, OrderBusinessRuleError],
+    [500, OrderInfrastructureError],
+  ])('%i se traduce a su error de dominio', (status, clase) => {
+    const { http, pedidos } = preparar();
+    let error: unknown;
+    pedidos.create(nuevo, 'k').subscribe({ error: (e) => (error = e) });
+    http.expectOne('/api/orders').flush({}, { status, statusText: 'x' });
     expect(error).toBeInstanceOf(clase);
   });
 });

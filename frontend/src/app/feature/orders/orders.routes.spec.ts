@@ -4,7 +4,7 @@ import { RouterTestingHarness } from '@angular/router/testing';
 import { of } from 'rxjs';
 import { createSpyObj } from '../../../testing/spy-obj';
 import { routes } from '../../app.routes';
-import { ListCustomerOptionsUseCase, ListOrdersUseCase } from './application/order.use-cases';
+import { CreateOrderUseCase, ListCustomerOptionsUseCase, ListOrdersUseCase } from './application/order.use-cases';
 import { ordersRoutes } from './orders.routes';
 
 describe('orders.routes', () => {
@@ -39,5 +39,28 @@ describe('orders.routes', () => {
     const harness = await RouterTestingHarness.create();
     await harness.navigateByUrl('/pedidos');
     expect((harness.routeNativeElement as HTMLElement).querySelector('h1')?.textContent).toContain('Pedidos');
+  });
+
+  it('la ruta literal «nuevo» existe y va a continuación de la lista', () => {
+    expect(ordersRoutes[0].children!.map((r) => r.path)).toEqual(['', 'nuevo']);
+  });
+
+  it('/pedidos/nuevo pinta el formulario', async () => {
+    const customers = createSpyObj<ListCustomerOptionsUseCase>(['execute']);
+    customers.execute.mockReturnValue(of([]));
+    const rutas: Routes = [
+      {
+        path: 'pedidos',
+        providers: [
+          { provide: ListCustomerOptionsUseCase, useValue: customers },
+          { provide: CreateOrderUseCase, useValue: createSpyObj<CreateOrderUseCase>(['execute']) },
+        ],
+        children: ordersRoutes[0].children!,
+      },
+    ];
+    TestBed.configureTestingModule({ providers: [provideRouter(rutas)] });
+    const harness = await RouterTestingHarness.create();
+    await harness.navigateByUrl('/pedidos/nuevo');
+    expect((harness.routeNativeElement as HTMLElement).querySelector('h1')?.textContent).toContain('Nuevo pedido');
   });
 });

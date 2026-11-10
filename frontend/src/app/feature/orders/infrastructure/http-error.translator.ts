@@ -3,6 +3,7 @@ import { Observable, throwError } from 'rxjs';
 import {
   ForbiddenOrderError,
   InvalidOrderInputError,
+  OrderBusinessRuleError,
   OrderInfrastructureError,
   OrderSessionExpiredError,
 } from '../domain/errors/order.errors';
@@ -13,5 +14,6 @@ export function traducir(error: unknown): Observable<never> {
   if (status === 400) return throwError(() => new InvalidOrderInputError());
   if (status === 401) return throwError(() => new OrderSessionExpiredError());
   if (status === 403) return throwError(() => new ForbiddenOrderError());
+  if (status === 422) return throwError(() => new OrderBusinessRuleError());
   return throwError(() => new OrderInfrastructureError());
 }

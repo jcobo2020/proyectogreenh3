@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CustomerOption, OrderFilters, OrderPage } from '../domain/models/order.model';
+import { CreatedOrder, CustomerOption, NewOrder, OrderFilters, OrderPage } from '../domain/models/order.model';
 import { CUSTOMER_OPTION_REPOSITORY } from '../domain/ports/customer-option-repository.port';
 import { ORDER_REPOSITORY } from '../domain/ports/order-repository.port';
 
@@ -10,6 +10,15 @@ export class ListOrdersUseCase {
 
   execute(filters: OrderFilters, page: number, pageSize: number): Observable<OrderPage> {
     return this.repository.list(filters, page, pageSize);
+  }
+}
+
+@Injectable()
+export class CreateOrderUseCase {
+  private readonly repository = inject(ORDER_REPOSITORY);
+
+  execute(order: NewOrder, idempotencyKey: string): Observable<CreatedOrder> {
+    return this.repository.create(order, idempotencyKey);
   }
 }
 

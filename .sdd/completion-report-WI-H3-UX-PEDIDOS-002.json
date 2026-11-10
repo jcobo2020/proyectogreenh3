@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 6,
+  "workItemCode": "WI-H3-UX-PEDIDOS-002",
+  "summary": "Pantalla /pedidos/nuevo (feature orders, por capas): formulario Cliente (select cargado de GET /api/customers), Fecha e Importe (mín. 0.01) con validación literal y accesible, POST /api/orders con Idempotency-Key estable por intento, estados cargando, error con reintento, sin permiso, 400, 401, y avisos de 400/401/403/422 al crear; tras el éxito avisa «Pedido creado.» y va a /pedidos/:id; Cancelar vuelve a /pedidos. Añade el caso de uso CreateOrderUseCase, create() en el puerto y repositorio HTTP, OrderBusinessRuleError (422), ruta lazy 'nuevo' y sus tests.",
+  "criteria": [
+    { "id": "AC-09", "status": "covered", "note": "order-create.component.spec.ts: ofrece Cliente/Fecha/Importe, envía {customerId,date,amount} y va a /pedidos/:id; http-repositories.spec.ts: POST /api/orders con Idempotency-Key. El estado pending lo fija el servidor." },
+    { "id": "AC-10", "status": "covered", "note": "order-create.component.spec.ts: «Cargando…» mientras espera los clientes y desaparece al llegar" },
+    { "id": "AC-11", "status": "covered", "note": "order-create.component.spec.ts: «No se pudo cargar. Vuelve a intentarlo.» con reintento y «Crear pedido» bloqueado" },
+    { "id": "AC-12", "status": "partial", "note": "«No tienes permiso para ver esto.» se muestra si la sesión (claim `permissions` del token) declara permisos y falta «pedidos.gestionar», y si GET /api/customers responde 403. El pack no define de dónde sale el permiso de sesión: el claim es una suposición (igual que en WI-H3-UX-PEDIDOS-001)." },
+    { "id": "AC-13", "status": "covered", "note": "order-create.component.spec.ts: carga con 400 → «Revisa los datos marcados.»" },
+    { "id": "AC-14", "status": "covered", "note": "order-create.component.spec.ts: carga con 401 → «Tu sesión terminó: vuelve a entrar.» con enlace a entrar; el interceptor de la feature limpia la sesión" },
+    { "id": "AC-25", "status": "covered", "note": "order-create.component.spec.ts: tras 201 avisa «Pedido creado.» (NoticeService) y navega a /pedidos/:id" },
+    { "id": "AC-26", "status": "covered", "note": "order-create.component.spec.ts y http-repositories.spec.ts: POST con 400 → «Revisa los datos marcados.», conserva lo escrito" },
+    { "id": "AC-27", "status": "covered", "note": "order-create.component.spec.ts y http-repositories.spec.ts: POST con 401 → «Tu sesión terminó: vuelve a entrar.»" },
+    { "id": "AC-28", "status": "covered", "note": "order-create.component.spec.ts y http-repositories.spec.ts: POST con 403 → «No tienes permiso para hacer esto.»" },
+    { "id": "AC-29", "status": "covered", "note": "order-create.component.spec.ts y http-repositories.spec.ts: POST con 422 → «No se pudo por una regla del negocio.»" }
+  ],
+  "requirements": [
+    { "id": "R4-ARQ-1", "status": "cumple", "evidencia": "frontend/src/app/feature/orders/ui/order-create/order-create.component.ts · test «reintentar tras un fallo usa la misma Idempotency-Key; si cambia lo escrito, una nueva; tras el éxito, otra»" },
+    { "id": "R4-ARQ-2", "status": "no_aplica", "evidencia": "Detalle del pedido es de otro work item del package" },
+    { "id": "R4-ARQ-3", "status": "cumple", "evidencia": "frontend/src/app/feature/orders/infrastructure/http-order.repository.ts · http-repositories.spec.ts (solo HttpClient hacia /api)" },
+    { "id": "R4-ARQ-4", "status": "cumple", "evidencia": "feature/orders: sin acceso a base de datos" },
+    { "id": "R4-ARQ-5", "status": "cumple", "evidencia": "cuerpo {customerId,date,amount} y respuestas según GREEN-H3-API-ORDERS-001" },
+    { "id": "R4-ARQ-6", "status": "cumple", "evidencia": "el frontend no calcula reglas de negocio: el 422 se muestra tal cual" },
+    { "id": "R4-ARQ-7", "status": "cumple", "evidencia": "order-create.component.ts: no presupone disponibilidad ni estado" },
+    { "id": "R4-ARQ-8", "status": "cumple", "evidencia": "el estado «pending» lo fija el servidor; el cuerpo no envía status" },
+    { "id": "R4-ARQ-9", "status": "cumple", "evidencia": "sin cachés: cada entrada vuelve a pedir GET /api/customers" },
+    { "id": "R4-PRUEBAS-1", "status": "no_aplica", "evidencia": "/pedidos es de WI-H3-UX-PEDIDOS-001" },
+    { "id": "R4-PRUEBAS-2", "status": "cumple", "evidencia": "http-repositories.spec.ts (200/401/400 de GET /api/customers) · order-create.component.spec.ts" },
+    { "id": "R4-PRUEBAS-3", "status": "no_aplica", "evidencia": "GET /api/orders es de otro work item" },
+    { "id": "R4-PRUEBAS-4", "status": "cumple", "evidencia": "order-create.component.spec.ts: estados cargando/error, obligatorios, mínimo 0.01, navegación a /pedidos/:id y /pedidos" },
+    { "id": "R4-PRUEBAS-5", "status": "cumple", "evidencia": "order-create.component.spec.ts: «AC-11» reintento y bloqueo del botón" },
+    { "id": "R4-PRUEBAS-6", "status": "cumple", "evidencia": "order-create.component.spec.ts y http-repositories.spec.ts: 201, 400, 401, 403, 422, conserva lo escrito, reintento" },
+    { "id": "R4-PRUEBAS-7", "status": "no_aplica", "evidencia": "/pedidos/:id es de otro work item" },
+    { "id": "R4-PRUEBAS-8", "status": "no_aplica", "evidencia": "Enviar pedido es de otro work item" },
+    { "id": "R4-PRUEBAS-9", "status": "no_aplica", "evidencia": "Cancelar pedido es de otro work item" },
+    { "id": "R4-PRUEBAS-10", "status": "no_aplica", "evidencia": "Cargar el elemento es de otro work item" },
+    { "id": "R4-PRUEBAS-11", "status": "no_aplica", "evidencia": "Confirmar es de otro work item" },
+    { "id": "R4-PRUEBAS-12", "status": "no_aplica", "evidencia": "Marcar como entregado es de otro work item" },
+    { "id": "R4-PRUEBAS-13", "status": "cumple", "evidencia": "AC-09..AC-14 y AC-25..AC-29 con prueba automática en order-create.component.spec.ts" },
+    { "id": "R4-PRUEBAS-14", "status": "cumple", "evidencia": "http-repositories.spec.ts: POST /api/orders feliz y 400/401/403/422/5xx" },
+    { "id": "R4-PRUEBAS-15", "status": "cumple", "evidencia": "estados cargando, error, sin permiso, 400 y 401 probados; «vacío» no lo declara esta pantalla (formulario)" },
+    { "id": "R4-PRUEBAS-16", "status": "cumple", "evidencia": "node comprobar.js: npm ci, npm test con cobertura, npm run build y arranque en verde" },
+    { "id": "R4-SEG-1", "status": "cumple", "evidencia": "ningún secreto en el código" },
+    { "id": "R4-SEG-2", "status": "no_aplica", "evidencia": "es del backend; el frontend envía el JWT con jwtInterceptor" },
+    { "id": "R4-SEG-3", "status": "no_aplica", "evidencia": "lo decide el backend" },
+    { "id": "R4-SEG-4", "status": "no_aplica", "evidencia": "validación de servidor; el frontend solo valida la entrada además" },
+    { "id": "R4-SEG-5", "status": "cumple", "evidencia": "el componente no escribe logs" },
+    { "id": "R4-SEG-6", "status": "no_aplica", "evidencia": "contrato del backend" },
+    { "id": "R4-SEG-7", "status": "no_aplica", "evidencia": "contrato del backend" },
+    { "id": "R4-SEG-8", "status": "cumple", "evidencia": "order-create.component.html y spec «AC-12»: /pedidos/nuevo dice «No tienes permiso para ver esto.»" },
+    { "id": "R4-SEG-9", "status": "cumple", "evidencia": "order-create.component.spec.ts: «AC-14» y «AC-27» con «Tu sesión terminó: vuelve a entrar.»" },
+    { "id": "R4-SEG-10", "status": "cumple", "evidencia": "order-create.component.ts: fieldError() exige Importe ≥ 0.01; el servidor lo valida también" },
+    { "id": "R4-REND-1", "status": "cumple", "evidencia": "el estado vive en el backend" },
+    { "id": "R4-REND-2", "status": "no_aplica", "evidencia": "no hay listados en esta pantalla" },
+    { "id": "R4-OBS-1", "status": "cumple", "evidencia": "sin logs en el código nuevo" }
+  ],
+  "testsRun": [
+    { "name": "order-create.component.spec.ts", "result": "pass" },
+    { "name": "http-repositories.spec.ts", "result": "pass" },
+    { "name": "order.use-cases.spec.ts", "result": "pass" },
+    { "name": "orders.routes.spec.ts", "result": "pass" }
+  ],
+  "deviations": [
+    { "description": "«Cancelar» en /pedidos/nuevo navega a /pedidos (enlace), pese a la regla aprendida LRN-e50bacb3 de la constitución.", "reason": "El propio pack declara que la regla no aplica a esta funcionalidad: la spec decide que «Cancelar» vuelve a /pedidos.", "respondeA": "spec" },
+    { "description": "El permiso de sesión «pedidos.gestionar» se lee del claim `permissions` del JWT (lacksPermission); si la sesión no declara permisos, se deja decidir a la API con su 403.", "reason": "El pack no dice de dónde sale el permiso de la sesión.", "respondeA": "otra" }
+  ],
+  "dodSelfAssessment": {
+    "met": false,
+    "blockers": [
+      "Captura de /pedidos/nuevo en cada estado (screenshot): la aporta una persona; no hay navegador en este entorno.",
+      "AC-12 parcial: el origen del permiso de sesión es una suposición (claim `permissions`)."
+    ]
+  },
+  "clarificationRequests": [
+    { "question": "¿De dónde sale el permiso «pedidos.gestionar» de la sesión? Se asumió el claim `permissions` del token.", "blocking": false, "context": "§2 dice «lo que dice la sesión de quien ha entrado» sin indicar el mecanismo; ni §7 ni §4 lo definen." },
+    { "question": "El destino /pedidos/:id aún no tiene ruta en el repositorio; la navegación tras crear apunta a él.", "blocking": false, "context": "§2 lo exige; la pantalla /pedidos/:id es de otro work item (§10)." }
+  ],
+  "evidence": [
+    { "type": "coverage_report", "ref": ".sdd/evidence/WI-H3-UX-PEDIDOS-002/coverage-summary.json", "note": "Reporte de cobertura de `npm test -- --coverage`: 98,76 % de sentencias globales y 100 % en los ficheros de feature/orders tocados" }
+  ],
+  "usoDelPack": {
+    "usadas": ["§1", "§1-bis", "§2", "§4", "§4-bis", "§7", "§8", "§10", "§11"],
+    "noSirvieron": ["§4 R4-PRUEBAS-1, 3, 7-12 y R4-ARQ-2 (otras partes del package)"],
+    "falto": [
+      { "que": "De dónde sale el permiso de sesión «pedidos.gestionar»", "dondeLoEncontro": "feature/orders/ui/order-list y @core/guards/permissions.ts, del WI-H3-UX-PEDIDOS-001" },
+      { "que": "Cómo es el estado actual del repositorio (feature orders ya existente con puerto, repositorio y rutas)", "dondeLoEncontro": "lectura del código; §1-bis decía que no había código preexistente, pero había" }
+    ]
+  }
+}

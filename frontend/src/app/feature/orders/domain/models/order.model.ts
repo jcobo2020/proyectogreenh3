@@ -21,6 +21,22 @@ export interface OrderPage {
   pageSize: number;
 }
 
+/** Cuerpo de POST /api/orders. */
+export interface NewOrder {
+  customerId: string;
+  date: string;
+  amount: number;
+}
+
+/** Respuesta 201 de POST /api/orders. */
+export interface CreatedOrder {
+  id: string;
+  customerId: string;
+  date: string;
+  amount: number;
+  status: string;
+}
+
 /** Opción del select «Cliente»: id y name de GET /api/customers. */
 export interface CustomerOption {
   id: string;
@@ -38,6 +54,9 @@ export const ORDER_STATUSES: readonly { value: string; label: string }[] = [
   { value: 'delivered', label: 'Entregado' },
   { value: 'cancelled', label: 'Cancelado' },
 ];
+
+/** Permiso que exige POST /api/orders. */
+export const ORDERS_MANAGE_PERMISSION = 'pedidos.gestionar';
 
 /** Permiso que exige GET /api/orders. */
 export const ORDERS_VIEW_PERMISSION = 'pedidos.consultar';
