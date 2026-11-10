@@ -17,6 +17,8 @@ type Campo = 'customerId' | 'date' | 'amount';
 const ORDEN: Campo[] = ['customerId', 'date', 'amount'];
 const GENERIC_ERROR = 'No se pudo cargar. Vuelve a intentarlo.';
 const MIN_AMOUNT = 0.01;
+/** Espera entre teclas antes de pedir GET /api/customers (respuesta a la pregunta sobre el buscador). */
+export const SEARCH_DEBOUNCE_MS = 300;
 
 /** Aviso de un fallo: su texto y si pide volver a entrar. */
 interface Aviso {
@@ -62,6 +64,7 @@ export class InvoiceCreateComponent {
   private intento: { key: string; cuerpo: string } | null = null;
   private busqueda: Subscription | null = null;
   private ultimaBusqueda = '';
+  private espera: ReturnType<typeof setTimeout> | null = null;
 
   protected readonly today = hoy();
 
@@ -87,7 +90,10 @@ export class InvoiceCreateComponent {
   protected readonly loginHref = loginUrl('/facturas/nueva');
 
   constructor() {
-    inject(DestroyRef).onDestroy(() => this.busqueda?.unsubscribe());
+    inject(DestroyRef).onDestroy(() => {
+      this.cancelarEspera();
+      this.busqueda?.unsubscribe();
+    });
   }
 
   /** «Crear factura» no se pulsa mientras falle la carga de clientes, ni mientras envía. */
@@ -95,9 +101,22 @@ export class InvoiceCreateComponent {
     return this.sending() || !!this.customersError();
   }
 
-  /** Al escribir en «Cliente»: desde 2 letras pide GET /api/customers?name=<lo escrito>. */
+  /** Al escribir en «Cliente»: espera 300 ms sin teclas y, desde 2 letras, pide GET /api/customers?name=<lo escrito>. */
   protected onSearch(event: Event): void {
-    this.search((event.target as HTMLInputElement).value);
+    const texto = (event.target as HTMLInputElement).value;
+    this.cancelarEspera();
+    // La petición anterior se cancela en cuanto llega otra tecla.
+    this.busqueda?.unsubscribe();
+    this.loadingCustomers.set(false);
+    this.espera = setTimeout(() => {
+      this.espera = null;
+      this.search(texto);
+    }, SEARCH_DEBOUNCE_MS);
+  }
+
+  private cancelarEspera(): void {
+    if (this.espera !== null) clearTimeout(this.espera);
+    this.espera = null;
   }
 
   protected retrySearch(): void {
@@ -110,6 +129,7 @@ export class InvoiceCreateComponent {
   }
 
   private search(texto: string): void {
+    this.cancelarEspera();
     const nombre = texto.trim();
     this.ultimaBusqueda = nombre;
     this.busqueda?.unsubscribe();

@@ -31,6 +31,9 @@ interface Opciones {
   crear?: Observable<CreatedInvoice>;
 }
 
+beforeEach(() => vi.useFakeTimers());
+afterEach(() => vi.useRealTimers());
+
 function crear(opciones: Opciones = {}) {
   const search = createSpyObj<SearchCustomerOptionsUseCase>(['execute']);
   const create = createSpyObj<CreateInvoiceUseCase>(['execute']);
@@ -57,7 +60,12 @@ function crear(opciones: Opciones = {}) {
   };
   const boton = (texto: string) =>
     Array.from(el.querySelectorAll('button, a')).find((b) => b.textContent?.includes(texto)) as HTMLElement;
-  const buscar = (texto: string) => escribir('customerSearch', texto);
+  /** Escribe y deja pasar la espera de 300 ms entre teclas. */
+  const buscar = (texto: string) => {
+    escribir('customerSearch', texto);
+    vi.advanceTimersByTime(300);
+    fixture.detectChanges();
+  };
   const rellenar = () => {
     buscar('an');
     escribir('customerId', 'c1');
@@ -95,6 +103,36 @@ describe('InvoiceCreateComponent · carga de clientes', () => {
     expect(el.querySelectorAll('#customerId option').length).toBe(3);
     buscar('ana');
     expect(search.execute).toHaveBeenLastCalledWith('ana');
+  });
+
+  it('espera 300 ms entre teclas: solo pide una vez, con lo último escrito', () => {
+    const { escribir, search, fixture } = crear();
+    escribir('customerSearch', 'an');
+    vi.advanceTimersByTime(299);
+    expect(search.execute).not.toHaveBeenCalled();
+    escribir('customerSearch', 'ana');
+    vi.advanceTimersByTime(299);
+    expect(search.execute).not.toHaveBeenCalled();
+    vi.advanceTimersByTime(1);
+    fixture.detectChanges();
+    expect(search.execute).toHaveBeenCalledTimes(1);
+    expect(search.execute).toHaveBeenCalledWith('ana');
+  });
+
+  it('una tecla nueva cancela la petición anterior aún pendiente, sin esperar a la espera', () => {
+    const { el, escribir, buscar } = crear({ clientes: NEVER });
+    buscar('an');
+    expect(el.textContent).toContain('Cargando…');
+    escribir('customerSearch', 'ana');
+    expect(el.textContent).not.toContain('Cargando…');
+  });
+
+  it('al destruir el componente cancela la espera pendiente', () => {
+    const { fixture, escribir, search } = crear();
+    escribir('customerSearch', 'an');
+    fixture.destroy();
+    vi.advanceTimersByTime(500);
+    expect(search.execute).not.toHaveBeenCalled();
   });
 
   it('al borrar el texto por debajo de 2 letras vacía las opciones', () => {
