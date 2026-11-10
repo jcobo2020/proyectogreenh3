@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 6,
+  "workItemCode": "WI-H3-API-ORDERS-001",
+  "summary": "Endpoints de /api/orders (lista paginada con $lookup del nombre del cliente, alta idempotente con number por secuencia, detalle, confirm, ship, deliver y cancel con transición atómica por estado de partida), permisos pedidos.consultar / pedidos.gestionar por sesión, modelos Order, Counter e IdempotencyKey compartido, Swagger y 50 tests de contrato.",
+  "criteria": [
+    { "id": "AC-01", "status": "covered", "note": "orders.test.ts GET: orden date desc y a igualdad id con filas desordenadas, filtros customerId/status, paginación, customerName leído al responder" },
+    { "id": "AC-02", "status": "covered", "note": "401 sin token y con token inválido" },
+    { "id": "AC-03", "status": "covered", "note": "403 sin pedidos.consultar (solo gestionar y sin permisos)" },
+    { "id": "AC-04", "status": "covered", "note": "400 con page, pageSize, status y customerId inválidos" },
+    { "id": "AC-05", "status": "covered", "note": "400 con customerId inexistente en el listado" },
+    { "id": "AC-06", "status": "covered", "note": "201 con id, datos y status pending; number correlativo" },
+    { "id": "AC-07", "status": "covered", "note": "400 con datos inválidos, sin cuerpo, sin Idempotency-Key y con clave de más de 255" },
+    { "id": "AC-08", "status": "covered", "note": "401 sin sesión en POST" },
+    { "id": "AC-09", "status": "covered", "note": "422 con misma clave y otro cuerpo, y con clave usada por otra operación" },
+    { "id": "AC-10", "status": "covered", "note": "400 con customerId inexistente; no crea nada" },
+    { "id": "AC-11", "status": "covered", "note": "replay con Idempotent-Replayed y sin duplicar; 4xx repetido igual; clave por usuario; clave caducada vale de nuevo" },
+    { "id": "AC-12", "status": "covered", "note": "dos envíos a la vez con la misma clave: un solo pedido, una respuesta con Idempotent-Replayed" },
+    { "id": "AC-41", "status": "covered", "note": "403 en POST sin pedidos.gestionar" },
+    { "id": "AC-13", "status": "covered", "note": "ship: 200, queda shipped con carrier y shippingDate" },
+    { "id": "AC-14", "status": "covered", "note": "ship: 400 con id no UUID, cuerpo vacío, carrier largo y fecha mal formada" },
+    { "id": "AC-15", "status": "covered", "note": "ship: 401 sin sesión" },
+    { "id": "AC-16", "status": "covered", "note": "ship: 403 sin pedidos.gestionar" },
+    { "id": "AC-17", "status": "covered", "note": "ship: 404 si no existe" },
+    { "id": "AC-18", "status": "covered", "note": "ship: 409 desde estado no válido y con dos peticiones a la vez" },
+    { "id": "AC-19", "status": "covered", "note": "cancel: 200, queda cancelled con cancellationReason" },
+    { "id": "AC-20", "status": "covered", "note": "cancel: 400 con id no UUID, sin motivo y motivo de más de 2000" },
+    { "id": "AC-21", "status": "covered", "note": "cancel: 401 sin sesión" },
+    { "id": "AC-22", "status": "covered", "note": "cancel: 403 sin pedidos.gestionar" },
+    { "id": "AC-23", "status": "covered", "note": "cancel: 404 si no existe" },
+    { "id": "AC-24", "status": "covered", "note": "cancel: 409 desde delivered / cancelled y con dos peticiones a la vez" },
+    { "id": "AC-25", "status": "covered", "note": "GET detalle: 200 con number y customerName" },
+    { "id": "AC-26", "status": "covered", "note": "GET detalle: 401 sin sesión" },
+    { "id": "AC-27", "status": "covered", "note": "GET detalle: 404 si no existe" },
+    { "id": "AC-28", "status": "covered", "note": "GET detalle: 400 con id no UUID" },
+    { "id": "AC-42", "status": "covered", "note": "GET detalle: 403 sin pedidos.consultar" },
+    { "id": "AC-29", "status": "covered", "note": "confirm: 200, queda confirmed" },
+    { "id": "AC-30", "status": "covered", "note": "confirm: 401 sin sesión" },
+    { "id": "AC-31", "status": "covered", "note": "confirm: 403 sin pedidos.gestionar" },
+    { "id": "AC-32", "status": "covered", "note": "confirm: 404 si no existe" },
+    { "id": "AC-33", "status": "covered", "note": "confirm: 409 desde estado no válido y con dos peticiones a la vez" },
+    { "id": "AC-34", "status": "covered", "note": "confirm: 400 con id no UUID" },
+    { "id": "AC-35", "status": "covered", "note": "deliver: 200, queda delivered" },
+    { "id": "AC-36", "status": "covered", "note": "deliver: 401 sin sesión" },
+    { "id": "AC-37", "status": "covered", "note": "deliver: 403 sin pedidos.gestionar" },
+    { "id": "AC-38", "status": "covered", "note": "deliver: 404 si no existe" },
+    { "id": "AC-39", "status": "covered", "note": "deliver: 409 desde estado no válido y con dos peticiones a la vez" },
+    { "id": "AC-40", "status": "covered", "note": "deliver: 400 con id no UUID" }
+  ],
+  "gates": [
+    { "businessRuleId": "RN-01", "status": "cumple", "note": "orders.test.ts: 'AC-03/AC-42/AC-16/AC-22/AC-31/AC-37 / RN-01': sin el permiso de la operación 403; con él, otro usuario ve y cambia pedidos que no creó, sin filtrar por quien entra" }
+  ],
+  "requirements": [
+    { "id": "R4-ARQ-1", "status": "no_aplica", "evidencia": "es del frontend" },
+    { "id": "R4-ARQ-2", "status": "no_aplica", "evidencia": "es del frontend" },
+    { "id": "R4-ARQ-3", "status": "cumple", "evidencia": "OrderController.ts · formas de respuesta según §2, sin campos añadidos" },
+    { "id": "R4-ARQ-4", "status": "cumple", "evidencia": "OrderService.ts · transition(): las reglas de estado las decide el backend" },
+    { "id": "R4-ARQ-5", "status": "no_aplica", "evidencia": "es del frontend" },
+    { "id": "R4-ARQ-6", "status": "cumple", "evidencia": "models/order.ts · el estado solo vive en la base" },
+    { "id": "R4-ARQ-7", "status": "cumple", "evidencia": "OrderService.listOrders · sin cachés; test 'el nombre del cliente se lee al responder'" },
+    { "id": "R4-SEG-1", "status": "cumple", "evidencia": "JWT_SECRET y MONGODB_URI solo por entorno; tests generan el secreto con randomBytes" },
+    { "id": "R4-SEG-2", "status": "cumple", "evidencia": "api.routes.ts · todas las rutas de orders llevan authenticate; tests AC-02/08/15/21/26/30/36" },
+    { "id": "R4-SEG-3", "status": "no_aplica", "evidencia": "la regla de clientes es de su propia API (R4-SEG-7)" },
+    { "id": "R4-SEG-4", "status": "cumple", "evidencia": "validators/orderValidator.ts · cuerpo, query e id validados en servidor" },
+    { "id": "R4-SEG-5", "status": "cumple", "evidencia": "ningún console.log ni log de datos en los ficheros nuevos" },
+    { "id": "R4-SEG-6", "status": "cumple", "evidencia": "middlewares/requirePermission.middleware.ts · tests RN-01" },
+    { "id": "R4-SEG-7", "status": "cumple", "evidencia": "el contrato no filtra por cliente; tests RN-01" },
+    { "id": "R4-REND-1", "status": "cumple", "evidencia": "igual que R4-ARQ-6" },
+    { "id": "R4-REND-2", "status": "cumple", "evidencia": "igual que R4-ARQ-7" },
+    { "id": "R4-OBS-1", "status": "cumple", "evidencia": "igual que R4-SEG-5" }
+  ],
+  "testsRun": [
+    { "name": "orders.test.ts", "result": "pass" },
+    { "name": "customers.test.ts", "result": "pass" },
+    { "name": "provinces.test.ts", "result": "pass" },
+    { "name": "towns.test.ts", "result": "pass" }
+  ],
+  "deviations": [
+    {
+      "description": "Los permisos «pedidos.consultar» y «pedidos.gestionar» se leen del claim `permissions` (array de strings) del JWT.",
+      "reason": "El pack exige comprobarlos con lo que dice la sesión pero no dice de dónde salen ni cómo se llama el claim.",
+      "respondeA": "spec"
+    },
+    {
+      "description": "Se creó el modelo Counter (secuencia 'order') para el number PED-000001, y la colección se inicializa en server.ts.",
+      "reason": "§2 pide un number correlativo dado por una secuencia de la base; Mongo no tiene secuencias nativas y §3 no define su formato ni su almacenamiento.",
+      "respondeA": "plantilla"
+    },
+    {
+      "description": "Se añadió IdempotencyService (lógica genérica) en lugar de duplicar la de CustomerService; se registra en CustomerService una referencia para que borrar un cliente con pedidos dé IN_USE.",
+      "reason": "La dependencia con GREEN-H3-API-CUSTOMERS-001 dice que borrar un cliente citado lo impide la base.",
+      "respondeA": "otra"
+    }
+  ],
+  "dodSelfAssessment": { "met": true, "blockers": [] },
+  "clarificationRequests": [
+    { "question": "¿De qué claim del JWT salen los permisos de la sesión, y con qué formato?", "blocking": false, "context": "§2 (Permiso) dice que se comprueban con la sesión; ni §2 ni §7 definen el claim. Se asumió `permissions: string[]`." },
+    { "question": "¿Qué formato debe tener Order.number y qué restricciones tiene amount (mínimo, decimales)?", "blocking": false, "context": "§2 y §3 dicen 'correlativo y único' y 'number'. Se asumió PED-000001 y amount >= 0." }
+  ],
+  "evidence": [
+    { "type": "test_results", "ref": ".sdd/evidence/WI-H3-API-ORDERS-001/test-results.txt", "note": "Tests unitarios passing" },
+    { "type": "api_docs", "ref": "api/src/controllers/OrderController.ts", "note": "Endpoints documentados en Swagger" },
+    { "type": "migration_log", "ref": ".sdd/evidence/WI-H3-API-ORDERS-001/arranque.txt", "note": "Migración ejecutada exitosamente" },
+    { "type": "coverage_report", "ref": ".sdd/evidence/WI-H3-API-ORDERS-001/coverage-summary.json", "note": "Reporte de cobertura ≥80%" }
+  ],
+  "usoDelPack": {
+    "usadas": ["§2", "§3", "§4", "§7", "§8", "§11"],
+    "noSirvieron": ["§1-bis", "§4-bis (LRN-e50bacb3 sobre pantallas)"],
+    "falto": [
+      { "que": "claim del JWT con los permisos", "dondeLoEncontro": "no estaba; decidido por mi cuenta" },
+      { "que": "formato del number y límites de amount", "dondeLoEncontro": "no estaba; decidido por mi cuenta" }
+    ]
+  }
+}

@@ -1,0 +1,59 @@
+
+> api@1.0.0 test
+> jest --coverage --coverageReporters=text --coverageReporters=json-summary
+
+PASS src/__tests__/provinces.test.ts (7.764 s)
+PASS src/__tests__/towns.test.ts (8.109 s)
+PASS src/__tests__/orders.test.ts (8.634 s)
+PASS src/__tests__/customers.test.ts (8.733 s)
+----------------------------------|---------|----------|---------|---------|-------------------
+File                              | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+----------------------------------|---------|----------|---------|---------|-------------------
+All files                         |   95.06 |    93.17 |   95.65 |   95.79 |                   
+ src                              |   38.46 |        0 |      40 |   40.54 |                   
+  app.ts                          |     100 |      100 |     100 |     100 |                   
+  server.ts                       |       0 |        0 |       0 |       0 | 1-27              
+ src/config                       |   85.71 |        0 |     100 |     100 |                   
+  connectDB.ts                    |      80 |        0 |     100 |     100 | 3-4               
+  swagger.ts                      |     100 |      100 |     100 |     100 |                   
+ src/controllers                  |   98.64 |      100 |     100 |   98.59 |                   
+  CustomerController.ts           |     100 |      100 |     100 |     100 |                   
+  OrderController.ts              |     100 |      100 |     100 |     100 |                   
+  ProvinceController.ts           |      80 |      100 |     100 |      80 | 48                
+  TownController.ts               |     100 |      100 |     100 |     100 |                   
+ src/lib                          |     100 |    66.66 |     100 |     100 |                   
+  email.ts                        |     100 |      100 |     100 |     100 |                   
+  errors.ts                       |     100 |        0 |     100 |     100 | 15                
+  uuid.ts                         |     100 |      100 |     100 |     100 |                   
+ src/middlewares                  |   97.56 |       92 |     100 |   97.36 |                   
+  authenticate.middleware.ts      |     100 |     90.9 |     100 |     100 | 18                
+  errorHandler.middleware.ts      |   94.44 |      100 |     100 |   94.11 | 25                
+  requirePermission.middleware.ts |     100 |    66.66 |     100 |     100 | 7                 
+ src/models                       |     100 |      100 |     100 |     100 |                   
+  counter.ts                      |     100 |      100 |     100 |     100 |                   
+  customer.ts                     |     100 |      100 |     100 |     100 |                   
+  idempotencyKey.ts               |     100 |      100 |     100 |     100 |                   
+  order.ts                        |     100 |      100 |     100 |     100 |                   
+  province.ts                     |     100 |      100 |     100 |     100 |                   
+  town.ts                         |     100 |      100 |     100 |     100 |                   
+ src/routes                       |     100 |      100 |     100 |     100 |                   
+  api.routes.ts                   |     100 |      100 |     100 |     100 |                   
+ src/services                     |   96.53 |    94.52 |   95.83 |   98.22 |                   
+  CustomerService.ts              |   96.61 |    95.65 |     100 |   98.01 | 235-238           
+  IdempotencyService.ts           |    92.3 |     87.5 |     100 |   94.28 | 88-91             
+  OrderService.ts                 |     100 |      100 |     100 |     100 |                   
+  ProvinceSeedService.ts          |    92.3 |      100 |   66.66 |     100 |                   
+  ProvinceService.ts              |     100 |      100 |     100 |     100 |                   
+  TownSeedService.ts              |      95 |      100 |      75 |     100 |                   
+  TownService.ts                  |     100 |      100 |     100 |     100 |                   
+ src/validators                   |     100 |      100 |     100 |     100 |                   
+  customerValidator.ts            |     100 |      100 |     100 |     100 |                   
+  orderValidator.ts               |     100 |      100 |     100 |     100 |                   
+  townValidator.ts                |     100 |      100 |     100 |     100 |                   
+----------------------------------|---------|----------|---------|---------|-------------------
+
+Test Suites: 4 passed, 4 total
+Tests:       108 passed, 108 total
+Snapshots:   0 total
+Time:        10.962 s, estimated 14 s
+Ran all test suites.

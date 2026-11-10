@@ -81,3 +81,30 @@ export class UnauthorizedError extends Error implements AppError {
     this.name = 'UnauthorizedError';
   }
 }
+
+export class ForbiddenError extends Error implements AppError {
+  status = 403;
+  code = 'FORBIDDEN';
+  constructor(permission: string) {
+    super(`No tienes el permiso «${permission}»`);
+    this.name = 'ForbiddenError';
+  }
+}
+
+export class OrderNotFoundError extends Error implements AppError {
+  status = 404;
+  code = 'NOT_FOUND';
+  constructor() {
+    super('El pedido no existe');
+    this.name = 'OrderNotFoundError';
+  }
+}
+
+export class OrderStateConflictError extends Error implements AppError {
+  status = 409;
+  code = 'CONFLICT';
+  constructor(from: string[]) {
+    super(`El pedido no está en un estado desde el que se puede hacer (solo desde ${from.join(', ')})`);
+    this.name = 'OrderStateConflictError';
+  }
+}

@@ -14,6 +14,9 @@ export function authenticate(req: Request, res: Response, next: NextFunction): v
     if (typeof payload === 'object' && typeof payload.sub === 'string') {
       res.locals.userId = payload.sub;
     }
+    // Permisos de la sesión (claim permissions): el servidor decide con ellos, nunca con lo que mande el front.
+    const permissions = typeof payload === 'object' ? payload.permissions : undefined;
+    res.locals.permissions = Array.isArray(permissions) ? permissions.filter((p) => typeof p === 'string') : [];
     next();
   } catch {
     next(new UnauthorizedError());
