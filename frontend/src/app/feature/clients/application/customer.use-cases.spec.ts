@@ -4,11 +4,14 @@ import { createSpyObj } from '../../../../testing/spy-obj';
 import { CustomerDetail } from '../domain/models/customer.model';
 import { CustomerRepositoryPort, CUSTOMER_REPOSITORY } from '../domain/ports/customer-repository.port';
 import { ProvinceRepositoryPort, PROVINCE_REPOSITORY } from '../domain/ports/province-repository.port';
+import { TownRepositoryPort, TOWN_REPOSITORY } from '../domain/ports/town-repository.port';
 import {
+  CreateCustomerUseCase,
   DeleteCustomerUseCase,
   GetCustomerUseCase,
   ListCustomersUseCase,
   ListProvincesUseCase,
+  ListTownsUseCase,
 } from './customer.use-cases';
 
 describe('casos de uso de clientes', () => {
@@ -47,6 +50,37 @@ describe('casos de uso de clientes', () => {
     TestBed.inject(GetCustomerUseCase).execute('u1').subscribe((r) => (resultado = r));
     expect(puerto.get).toHaveBeenCalledWith('u1');
     expect(resultado).toBe(detalle);
+  });
+
+  it('ListTownsUseCase delega en el puerto con la provincia', () => {
+    const puerto = createSpyObj<TownRepositoryPort>(['listByProvince']);
+    puerto.listByProvince.mockReturnValue(of([]));
+    TestBed.configureTestingModule({
+      providers: [ListTownsUseCase, { provide: TOWN_REPOSITORY, useValue: puerto }],
+    });
+    TestBed.inject(ListTownsUseCase).execute('p1').subscribe();
+    expect(puerto.listByProvince).toHaveBeenCalledWith('p1');
+  });
+
+  it('CreateCustomerUseCase delega en el puerto con la clave de idempotencia', () => {
+    const puerto = createSpyObj<CustomerRepositoryPort>(['create']);
+    const creado = { id: 'u1' } as unknown as CustomerDetail;
+    puerto.create.mockReturnValue(of(creado));
+    TestBed.configureTestingModule({
+      providers: [CreateCustomerUseCase, { provide: CUSTOMER_REPOSITORY, useValue: puerto }],
+    });
+    const cuerpo = {
+      name: 'Ana',
+      email: 'a@b.c',
+      provinceId: 'p1',
+      townId: 't1',
+      status: 'active',
+      streetAddress: 'Calle 1',
+    };
+    let resultado: unknown;
+    TestBed.inject(CreateCustomerUseCase).execute(cuerpo, 'k1').subscribe((r) => (resultado = r));
+    expect(puerto.create).toHaveBeenCalledWith(cuerpo, 'k1');
+    expect(resultado).toBe(creado);
   });
 
   it('DeleteCustomerUseCase delega en el puerto', () => {

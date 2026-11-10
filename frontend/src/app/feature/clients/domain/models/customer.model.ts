@@ -35,3 +35,19 @@ export interface Province {
 }
 
 export const CUSTOMERS_PAGE_SIZE = 20;
+
+export interface Town {
+  id: string;
+  provinceId: string;
+  name: string;
+}
+
+/** Cuerpo de POST /api/customers. */
+export interface NewCustomer {
+  name: string;
+  email: string;
+  provinceId: string;
+  townId: string;
+  status: string;
+  streetAddress: string;
+}

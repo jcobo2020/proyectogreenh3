@@ -30,6 +30,22 @@ export class CustomerInUseError extends Error {
   }
 }
 
+/** 409 al crear: ya existe otro cliente con el mismo email. */
+export class DuplicateCustomerEmailError extends Error {
+  constructor() {
+    super('Ya existe otro con el mismo «Email».');
+    this.name = 'DuplicateCustomerEmailError';
+  }
+}
+
+/** 422 al crear: la Idempotency-Key ya se usó con otro cuerpo u otra operación. */
+export class CustomerBusinessRuleError extends Error {
+  constructor() {
+    super('No se pudo por una regla del negocio.');
+    this.name = 'CustomerBusinessRuleError';
+  }
+}
+
 /** Cualquier otro fallo (red, 5xx…). */
 export class CustomerInfrastructureError extends Error {
   constructor() {

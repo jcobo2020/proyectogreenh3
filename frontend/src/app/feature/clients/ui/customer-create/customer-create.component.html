@@ -1,0 +1,155 @@
+<section class="alta">
+  <h1>Nuevo cliente</h1>
+
+  @if (loadingProvinces()) {
+    <p role="status">Cargando…</p>
+  }
+  @if (provincesError(); as fallo) {
+    <p role="alert">
+      {{ fallo.texto }}
+      @if (fallo.sesion) {
+        <a class="boton" [href]="loginHref">Entrar</a>
+      } @else {
+        <button type="button" class="boton" (click)="loadProvinces()">Reintentar</button>
+      }
+    </p>
+  }
+  @if (townsError(); as fallo) {
+    <p role="alert">
+      {{ fallo.texto }}
+      @if (fallo.sesion) {
+        <a class="boton" [href]="loginHref">Entrar</a>
+      } @else {
+        <button type="button" class="boton" (click)="loadTowns()">Reintentar</button>
+      }
+    </p>
+  }
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+    <fieldset class="alta__grupo">
+      <legend>Datos del cliente</legend>
+
+      <div class="campo">
+        <label for="name">Nombre</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          aria-required="true"
+          [attr.aria-invalid]="fieldError('name') ? 'true' : null"
+          [attr.aria-describedby]="fieldError('name') ? 'name-error' : null"
+        />
+        @if (fieldError('name'); as mensaje) {
+          <p class="campo__error" id="name-error">{{ mensaje }}</p>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          aria-required="true"
+          [attr.aria-invalid]="fieldError('email') ? 'true' : null"
+          [attr.aria-describedby]="fieldError('email') ? 'email-error' : null"
+        />
+        @if (fieldError('email'); as mensaje) {
+          <p class="campo__error" id="email-error">{{ mensaje }}</p>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="streetAddress">Dirección</label>
+        <input
+          id="streetAddress"
+          type="text"
+          formControlName="streetAddress"
+          aria-required="true"
+          [attr.aria-invalid]="fieldError('streetAddress') ? 'true' : null"
+          [attr.aria-describedby]="fieldError('streetAddress') ? 'streetAddress-error' : null"
+        />
+        @if (fieldError('streetAddress'); as mensaje) {
+          <p class="campo__error" id="streetAddress-error">{{ mensaje }}</p>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="provinceId">Provincia</label>
+        <select
+          id="provinceId"
+          formControlName="provinceId"
+          aria-required="true"
+          [attr.aria-invalid]="fieldError('provinceId') ? 'true' : null"
+          [attr.aria-describedby]="'provinceId-ayuda' + (fieldError('provinceId') ? ' provinceId-error' : '')"
+        >
+          <option value="">Selecciona…</option>
+          @for (province of provinces(); track province.id) {
+            <option [value]="province.id">{{ province.name }}</option>
+          }
+        </select>
+        <p class="campo__ayuda" id="provinceId-ayuda">Elige la provincia del cliente</p>
+        @if (fieldError('provinceId'); as mensaje) {
+          <p class="campo__error" id="provinceId-error">{{ mensaje }}</p>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="townId">Población</label>
+        <select
+          id="townId"
+          formControlName="townId"
+          aria-required="true"
+          [attr.aria-invalid]="fieldError('townId') ? 'true' : null"
+          [attr.aria-describedby]="'townId-ayuda' + (fieldError('townId') ? ' townId-error' : '')"
+        >
+          <option value="">Selecciona…</option>
+          @for (town of towns(); track town.id) {
+            <option [value]="town.id">{{ town.name }}</option>
+          }
+        </select>
+        <p class="campo__ayuda" id="townId-ayuda">Las poblaciones se filtran según la provincia elegida</p>
+        @if (fieldError('townId'); as mensaje) {
+          <p class="campo__error" id="townId-error">{{ mensaje }}</p>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="status">Estado</label>
+        <select
+          id="status"
+          formControlName="status"
+          aria-required="true"
+          [attr.aria-invalid]="fieldError('status') ? 'true' : null"
+          [attr.aria-describedby]="fieldError('status') ? 'status-error' : null"
+        >
+          <option value="">Selecciona…</option>
+          @for (status of statuses; track status.value) {
+            <option [value]="status.value">{{ status.label }}</option>
+          }
+        </select>
+        @if (fieldError('status'); as mensaje) {
+          <p class="campo__error" id="status-error">{{ mensaje }}</p>
+        }
+      </div>
+    </fieldset>
+
+    @if (submitError(); as fallo) {
+      <p role="alert" class="alta__aviso">
+        {{ fallo.texto }}
+        @if (fallo.sesion) {
+          <a class="boton" [href]="loginHref">Entrar</a>
+        } @else {
+          <button type="button" class="boton" [disabled]="blocked" (click)="submit()">Reintentar</button>
+        }
+      </p>
+    }
+
+    <footer class="alta__pie">
+      <a class="boton" routerLink="/clientes">Cancelar</a>
+      <button type="submit" class="boton boton--primario" [disabled]="blocked">
+        {{ sending() ? 'Enviando…' : 'Crear cliente' }}
+      </button>
+    </footer>
+  </form>
+</section>

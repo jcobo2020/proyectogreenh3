@@ -2,9 +2,9 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { CustomerDetail, CustomerFilters, CustomerPage } from '../domain/models/customer.model';
+import { CustomerDetail, CustomerFilters, CustomerPage, NewCustomer } from '../domain/models/customer.model';
 import { CustomerRepositoryPort } from '../domain/ports/customer-repository.port';
-import { traducir } from './http-error.translator';
+import { traducir, traducirAlta } from './http-error.translator';
 
 @Injectable()
 export class HttpCustomerRepository implements CustomerRepositoryPort {
@@ -30,5 +30,13 @@ export class HttpCustomerRepository implements CustomerRepositoryPort {
     return this.http
       .delete<void>(`${environment.apiBaseUrl}/customers/${encodeURIComponent(id)}`)
       .pipe(catchError(traducir));
+  }
+
+  create(customer: NewCustomer, idempotencyKey: string): Observable<CustomerDetail> {
+    return this.http
+      .post<CustomerDetail>(`${environment.apiBaseUrl}/customers`, customer, {
+        headers: { 'Idempotency-Key': idempotencyKey },
+      })
+      .pipe(catchError(traducirAlta));
   }
 }

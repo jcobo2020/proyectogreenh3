@@ -6,6 +6,7 @@ import { routes } from './app.routes';
 import { clientsRoutes } from './feature/clients/clients.routes';
 import { serverRoutes } from './app.routes.server';
 import { NoticeService } from './@core/services/notice.service';
+import { CustomerCreateComponent } from './feature/clients/ui/customer-create/customer-create.component';
 import { CustomerDetailComponent } from './feature/clients/ui/customer-detail/customer-detail.component';
 import { CustomerListComponent } from './feature/clients/ui/customer-list/customer-list.component';
 
@@ -36,10 +37,11 @@ describe('App y rutas', () => {
     expect(cargadas).toBe(clientsRoutes);
   });
 
-  it('la ruta :id carga el detalle de cliente y va después de la lista', () => {
+  it('la ruta literal nuevo va antes que :id y carga el alta; :id carga el detalle', () => {
     const hijas = clientsRoutes[0].children ?? [];
-    expect(hijas.map((r) => r.path)).toEqual(['', ':id']);
-    expect(hijas[1].component).toBe(CustomerDetailComponent);
+    expect(hijas.map((r) => r.path)).toEqual(['', 'nuevo', ':id']);
+    expect(hijas[1].component).toBe(CustomerCreateComponent);
+    expect(hijas[2].component).toBe(CustomerDetailComponent);
   });
 
   it('muestra el aviso del NoticeService', () => {

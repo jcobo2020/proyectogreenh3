@@ -2,6 +2,8 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import {
+  CustomerBusinessRuleError,
+  DuplicateCustomerEmailError,
   CustomerInUseError,
   CustomerInfrastructureError,
   CustomerNotFoundError,
@@ -117,6 +119,42 @@ describe('HttpCustomerRepository · GET y DELETE /api/customers/:id', () => {
     let error: unknown;
     clientes.get('u1').subscribe({ error: (e) => (error = e) });
     http.expectOne('/api/customers/u1').flush({}, { status, statusText: 'x' });
+    expect(error).toBeInstanceOf(clase);
+  });
+
+  it('POST 201: envía el cuerpo y la Idempotency-Key y devuelve el creado', () => {
+    const { http, clientes } = preparar();
+    const cuerpo = {
+      name: 'Ana',
+      email: 'a@b.c',
+      provinceId: 'p1',
+      townId: 't1',
+      status: 'active',
+      streetAddress: 'Calle 1',
+    };
+    let resultado: unknown;
+    clientes.create(cuerpo, 'clave-1').subscribe((r) => (resultado = r));
+    const req = http.expectOne('/api/customers');
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body).toEqual(cuerpo);
+    expect(req.request.headers.get('Idempotency-Key')).toBe('clave-1');
+    req.flush({ id: 'u1', ...cuerpo, version: 1 }, { status: 201, statusText: 'Created' });
+    expect(resultado).toMatchObject({ id: 'u1' });
+  });
+
+  it.each([
+    [400, InvalidCustomerInputError],
+    [401, CustomerSessionExpiredError],
+    [409, DuplicateCustomerEmailError],
+    [422, CustomerBusinessRuleError],
+    [500, CustomerInfrastructureError],
+  ])('POST %i se traduce a su error de dominio', (status, clase) => {
+    const { http, clientes } = preparar();
+    let error: unknown;
+    clientes
+      .create({ name: '', email: '', provinceId: '', townId: '', status: '', streetAddress: '' }, 'k')
+      .subscribe({ error: (e) => (error = e) });
+    http.expectOne('/api/customers').flush({}, { status, statusText: 'x' });
     expect(error).toBeInstanceOf(clase);
   });
 
