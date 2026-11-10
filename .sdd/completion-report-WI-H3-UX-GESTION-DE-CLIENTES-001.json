@@ -1,0 +1,101 @@
+{
+  "schemaVersion": 6,
+  "workItemCode": "WI-H3-UX-GESTION-DE-CLIENTES-001",
+  "summary": "Esqueleto Angular 21 SSR en frontend/ y pantalla /clientes por capas (domain/application/infrastructure/ui): tabla con nombre, email, provincia, población y estado, filtros por nombre/provincia/estado, paginación de 20, y los estados cargando, vacío, error, 400 y 401. «Ver detalle» y «Nuevo cliente» navegan a /clientes/:id y /clientes/nuevo.",
+  "criteria": [
+    { "id": "AC-01", "status": "covered", "note": "customer-list.component.spec.ts: columnas, carga de provincias y clientes al entrar, filtros name/provinceId/status hacia query, paginación y navegación de los dos controles; http-repositories.spec.ts: query enviada." },
+    { "id": "AC-02", "status": "covered", "note": "customer-list.component.spec.ts: «Cargando…» con la petición pendiente." },
+    { "id": "AC-03", "status": "covered", "note": "customer-list.component.spec.ts: «No hay datos que mostrar.» con items vacío." },
+    { "id": "AC-04", "status": "covered", "note": "customer-list.component.spec.ts: «No se pudo cargar. Vuelve a intentarlo.» con botón Reintentar; también para errores no tipados." },
+    { "id": "AC-05", "status": "covered", "note": "customer-list.component.spec.ts: «Revisa los datos marcados.» ante InvalidCustomerInputError; http-repositories.spec.ts traduce 400." },
+    { "id": "AC-06", "status": "covered", "note": "customer-list.component.spec.ts: «Tu sesión terminó: vuelve a entrar.» ante 401 de clientes o de provincias; jwt.interceptor.spec.ts limpia la sesión." }
+  ],
+  "requirements": [
+    { "id": "R4-ARQ-1", "status": "no_aplica", "evidencia": "Idempotency-Key es de «Crear cliente», fuera de esta pantalla (§10)." },
+    { "id": "R4-ARQ-2", "status": "no_aplica", "evidencia": "If-Match es de «Guardar cambios», fuera de esta pantalla." },
+    { "id": "R4-ARQ-3", "status": "no_aplica", "evidencia": "Es de «Editar cliente», fuera de esta pantalla." },
+    { "id": "R4-ARQ-4", "status": "cumple", "evidencia": "http-customer.repository.ts, http-province.repository.ts: solo HttpClient hacia /api · http-repositories.spec.ts" },
+    { "id": "R4-ARQ-5", "status": "cumple", "evidencia": "El frontend no accede a ninguna base de datos." },
+    { "id": "R4-ARQ-6", "status": "cumple", "evidencia": "Forma de las respuestas tomada de los contratos GET /api/customers y /api/provinces del pack §2." },
+    { "id": "R4-ARQ-7", "status": "cumple", "evidencia": "customer-list.component.ts: no calcula reglas de negocio." },
+    { "id": "R4-ARQ-8", "status": "cumple", "evidencia": "customer-list.component.ts: solo muestra lo que devuelve el servidor." },
+    { "id": "R4-ARQ-9", "status": "cumple", "evidencia": "El estado de los clientes no se guarda en el front más allá de la vista actual." },
+    { "id": "R4-ARQ-10", "status": "cumple", "evidencia": "customer-list.component.ts: cada filtro o cambio de página vuelve a pedir al servidor; sin caché." },
+    { "id": "R4-PRUEBAS-1", "status": "cumple", "evidencia": "customer-list.component.spec.ts: estados cargando, vacío, error; navegación de «Ver detalle» y «Nuevo cliente»." },
+    { "id": "R4-PRUEBAS-2", "status": "cumple", "evidencia": "http-repositories.spec.ts: GET /api/provinces 200 y 401." },
+    { "id": "R4-PRUEBAS-3", "status": "cumple", "evidencia": "http-repositories.spec.ts: GET /api/customers 200, 401, 400 (y 500/red)." },
+    { "id": "R4-PRUEBAS-4", "status": "no_aplica", "evidencia": "Pantalla /clientes/:id: otro work item." },
+    { "id": "R4-PRUEBAS-5", "status": "no_aplica", "evidencia": "Eliminar cliente: otro work item." },
+    { "id": "R4-PRUEBAS-6", "status": "no_aplica", "evidencia": "Cargar el elemento: otro work item." },
+    { "id": "R4-PRUEBAS-7", "status": "no_aplica", "evidencia": "/clientes/nuevo: otro work item." },
+    { "id": "R4-PRUEBAS-8", "status": "no_aplica", "evidencia": "Provincias en el formulario de creación: otro work item (en /clientes se cubre en R4-PRUEBAS-2)." },
+    { "id": "R4-PRUEBAS-9", "status": "no_aplica", "evidencia": "GET /api/towns no lo consume /clientes." },
+    { "id": "R4-PRUEBAS-10", "status": "no_aplica", "evidencia": "Crear cliente: otro work item." },
+    { "id": "R4-PRUEBAS-11", "status": "no_aplica", "evidencia": "/clientes/:id/editar: otro work item." },
+    { "id": "R4-PRUEBAS-12", "status": "no_aplica", "evidencia": "Provincias en edición: otro work item." },
+    { "id": "R4-PRUEBAS-13", "status": "no_aplica", "evidencia": "Poblaciones en edición: otro work item." },
+    { "id": "R4-PRUEBAS-14", "status": "no_aplica", "evidencia": "Guardar cambios: otro work item." },
+    { "id": "R4-PRUEBAS-15", "status": "no_aplica", "evidencia": "Fragmento de R4-PRUEBAS-14 (texto cortado en el pack): otro work item." },
+    { "id": "R4-PRUEBAS-16", "status": "no_aplica", "evidencia": "Cargar el elemento: otro work item." },
+    { "id": "R4-PRUEBAS-17", "status": "cumple", "evidencia": "AC-01..AC-06 con prueba en customer-list.component.spec.ts." },
+    { "id": "R4-PRUEBAS-18", "status": "cumple", "evidencia": "Los dos endpoints que consume la pantalla, en su caso feliz y en cada error del contrato: http-repositories.spec.ts." },
+    { "id": "R4-PRUEBAS-19", "status": "cumple", "evidencia": "customer-list.component.spec.ts: cargando, vacío, error, sin permiso (401) y con datos." },
+    { "id": "R4-PRUEBAS-20", "status": "cumple", "evidencia": "node comprobar.js: install, test y build en verde." },
+    { "id": "R4-SEG-1", "status": "cumple", "evidencia": "Sin secretos en el repo; el token sale de sessionStorage en tiempo de ejecución." },
+    { "id": "R4-SEG-2", "status": "cumple", "evidencia": "app.routes.ts: authGuard en /clientes; jwt.interceptor.ts envía el Bearer." },
+    { "id": "R4-SEG-3", "status": "no_aplica", "evidencia": "Permisos por recurso los decide el backend; la spec de clientes no define roles." },
+    { "id": "R4-SEG-4", "status": "no_aplica", "evidencia": "Validación de servidor: backend." },
+    { "id": "R4-SEG-5", "status": "cumple", "evidencia": "El front no escribe datos personales ni tokens en logs (no hay console.*)." },
+    { "id": "R4-SEG-6", "status": "cumple", "evidencia": "AC-06: /clientes dice «Tu sesión terminó: vuelve a entrar.» ante 401 · customer-list.component.spec.ts. Las demás pantallas no son de este work item." },
+    { "id": "R4-REND-1", "status": "cumple", "evidencia": "Igual que R4-ARQ-9." },
+    { "id": "R4-REND-2", "status": "cumple", "evidencia": "Igual que R4-ARQ-10." },
+    { "id": "R4-OBS-1", "status": "cumple", "evidencia": "Igual que R4-SEG-5." }
+  ],
+  "testsRun": [
+    { "name": "customer-list.component.spec.ts", "result": "pass" },
+    { "name": "http-repositories.spec.ts", "result": "pass" },
+    { "name": "customer.use-cases.spec.ts", "result": "pass" },
+    { "name": "auth.guard.spec.ts", "result": "pass" },
+    { "name": "jwt.interceptor.spec.ts", "result": "pass" },
+    { "name": "app.spec.ts", "result": "pass" }
+  ],
+  "deviations": [
+    {
+      "description": "El interceptor de sesión de la feature ante un 401 solo limpia la sesión y no redirige al login; el aviso «Tu sesión terminó: vuelve a entrar.» lo pinta la pantalla con un enlace «Entrar» a /login?returnUrl=/clientes.",
+      "reason": "AC-06 exige mostrar ese mensaje en /clientes; redirigir desde el interceptor lo haría imposible de ver. El authGuard sí redirige cuando no hay token.",
+      "respondeA": "plantilla"
+    },
+    {
+      "description": "La ruta del login (/login) y el origen del token (sessionStorage, clave «token») son supuestos: el repo no tiene login ni identityProviderUrl definidos. Quedan en src/environments/environment.ts y auth.guard.ts.",
+      "reason": "El pack no dice dónde está el login ni cómo se guarda el token.",
+      "respondeA": "otra"
+    },
+    {
+      "description": "No se añadió el errorInterceptor global ni provideHttpClient en app.config.ts: solo la feature monta su HttpClient.",
+      "reason": "Ningún endpoint de esta pantalla lo usa; la plantilla pide no crear utilidades sin uso.",
+      "respondeA": "plantilla"
+    }
+  ],
+  "dodSelfAssessment": {
+    "met": false,
+    "blockers": [
+      "La evidencia «Capturas de /clientes en cada estado declarado» (screenshot) la aporta una persona; el agente no la produce."
+    ]
+  },
+  "evidence": [
+    { "type": "coverage_report", "ref": ".sdd/evidence/WI-H3-UX-GESTION-DE-CLIENTES-001/coverage-summary.json", "note": "Reporte de cobertura ≥80%: 98.91% sentencias, 100% líneas (salida real de ng test --coverage)." }
+  ],
+  "clarificationRequests": [
+    { "question": "¿Dónde está la pantalla de login y cómo se guarda el token de sesión?", "blocking": false, "context": "§7 dice «el destino de login que ya use el repo», pero el repo no tiene frontend previo; asumí /login y sessionStorage['token']." },
+    { "question": "¿Qué hacer con el texto de R4-PRUEBAS-14/15, partido en dos requisitos?", "blocking": false, "context": "§4: «con 428, avisa «Algo falló.» y R4-PRUEBAS-15 empieza en «Vuelve a intentarlo.»; es de otro work item, solo lo anoto." }
+  ],
+  "usoDelPack": {
+    "usadas": ["§1", "§1-bis", "§2", "§4", "§7", "§8", "§10", "§11"],
+    "noSirvieron": ["§4 R4-PRUEBAS-4 a R4-PRUEBAS-16 (otras pantallas del package)", "§4 R4-ARQ-1..3"],
+    "falto": [
+      { "que": "Ubicación del login y del token de sesión", "dondeLoEncontro": "No estaba; lo asumí" },
+      { "que": "Rama base: la rama del package no existe y el repo solo tenía ramas del API", "dondeLoEncontro": "git branch -a; la creé desde la rama actual" },
+      { "que": "Puerto del API para el proxy de desarrollo", "dondeLoEncontro": "Asumí http://localhost:3000 en proxy.conf.json" }
+    ]
+  }
+}

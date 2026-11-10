@@ -1,0 +1,65 @@
+
+> frontend@0.0.0 test
+> ng test --coverage --coverage-reporters=text --coverage-reporters=json-summary --watch=false
+
+Node.js version v23.11.0 detected.
+Odd numbered Node.js versions will not enter LTS status and should not be used for production. For more information, please see https://nodejs.org/en/about/previous-releases/.
+❯ Building...
+✔ Building...
+Initial chunk files                                                  | Names                                                             |  Raw size
+chunk-RHXOE7IJ.js                                                    | -                                                                 |  22.63 kB | 
+spec-app-feature-clients-ui-customer-list-customer-list.component.js | spec-app-feature-clients-ui-customer-list-customer-list.component |   7.76 kB | 
+chunk-RSTWSNOR.js                                                    | -                                                                 |   4.75 kB | 
+spec-app-feature-clients-infrastructure-http-repositories.js         | spec-app-feature-clients-infrastructure-http-repositories         |   3.83 kB | 
+spec-app-app.js                                                      | spec-app-app                                                      |   3.18 kB | 
+chunk-PWLNZDZX.js                                                    | -                                                                 |   3.11 kB | 
+spec-app-@core-interceptors-jwt.interceptor.js                       | spec-app-@core-interceptors-jwt.interceptor                       |   2.40 kB | 
+chunk-BYA25LIR.js                                                    | -                                                                 |   1.96 kB | 
+spec-app-@core-guards-auth.guard.js                                  | spec-app-@core-guards-auth.guard                                  |   1.69 kB | 
+spec-app-feature-clients-application-customer.use-cases.js           | spec-app-feature-clients-application-customer.use-cases           |   1.53 kB | 
+init-testbed.js                                                      | init-testbed                                                      |   1.21 kB | 
+chunk-RVAEA6DA.js                                                    | -                                                                 |   1.01 kB | 
+vitest-mock-patch.js                                                 | vitest-mock-patch                                                 | 974 bytes | 
+chunk-64RLZZ6Z.js                                                    | -                                                                 | 902 bytes | 
+chunk-5RZ52CKJ.js                                                    | -                                                                 | 737 bytes | 
+chunk-OHGFPDYX.js                                                    | -                                                                 | 670 bytes | 
+chunk-ROLHRMNJ.js                                                    | -                                                                 | 262 bytes | 
+chunk-VGYXMD5O.js                                                    | -                                                                 | 242 bytes | 
+styles.css                                                           | styles                                                            |  56 bytes | 
+
+                                                                     | Initial total                                                     |  58.91 kB
+
+Lazy chunk files                                                     | Names                                                             |  Raw size
+chunk-YOKBGFYZ.js                                                    | clients-routes                                                    | 366 bytes | 
+
+Application bundle generation complete. [1.414 seconds] - 2026-11-10T01:40:12.526Z
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.12 [39m[90m/Users/jcoboc/Desktop/ProyectosClaude/prueba-punta-a-punta-green-h3/frontend[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+
+[2m Test Files [22m [1m[32m6 passed[39m[22m[90m (6)[39m
+[2m      Tests [22m [1m[32m38 passed[39m[22m[90m (38)[39m
+[2m   Start at [22m 20:40:12
+[2m   Duration [22m 2.15s[2m (transform 472ms, setup 2.27s, import 699ms, tests 396ms, environment 6.24s)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   98.91 |    96.93 |   95.55 |     100 |                   
+ app               |     100 |       90 |     100 |     100 |                   
+  app.ts           |     100 |       90 |     100 |     100 | 10                
+ ...infrastructure |     100 |    95.83 |     100 |     100 |                   
+  ...translator.ts |     100 |    83.33 |     100 |     100 | 11                
+ .../customer-list |   98.42 |    97.72 |    90.9 |     100 |                   
+  ...omponent.html |   97.88 |     87.5 |      75 |     100 | 47                
+-------------------|---------|----------|---------|---------|-------------------
+
+=============================== Coverage summary ===============================
+Statements   : 98.91% ( 273/276 )
+Branches     : 96.93% ( 95/98 )
+Functions    : 95.55% ( 43/45 )
+Lines        : 100% ( 160/160 )
+================================================================================

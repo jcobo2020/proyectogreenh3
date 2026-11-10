@@ -1,0 +1,105 @@
+<section class="clientes">
+  <header class="clientes__cabecera">
+    <h1>Clientes</h1>
+    <a class="boton boton--primario" routerLink="/clientes/nuevo">
+      <span aria-hidden="true">+</span> Nuevo cliente
+    </a>
+  </header>
+
+  <form class="clientes__filtros" (submit)="$event.preventDefault()">
+    <label>
+      Nombre
+      <input
+        type="text"
+        name="name"
+        placeholder="Buscar por nombre…"
+        [value]="filters().name"
+        (change)="setFilter('name', $any($event.target).value)"
+      />
+    </label>
+    <label>
+      Provincia
+      <select name="provinceId" [value]="filters().provinceId" (change)="setFilter('provinceId', $any($event.target).value)">
+        <option value="">Todas</option>
+        @for (province of provinces(); track province.id) {
+          <option [value]="province.id" [selected]="province.id === filters().provinceId">{{ province.name }}</option>
+        }
+      </select>
+      <small>Filtra por provincia</small>
+    </label>
+    <label>
+      Estado
+      <select name="status" [value]="filters().status" (change)="setFilter('status', $any($event.target).value)">
+        <option value="">Todos</option>
+        <option value="active">Activo</option>
+        <option value="inactive">Inactivo</option>
+      </select>
+    </label>
+  </form>
+
+  @if (provincesFailed()) {
+    <p class="clientes__aviso" role="alert">
+      No se pudo cargar. Vuelve a intentarlo.
+      <button type="button" class="boton" (click)="loadProvinces()">Reintentar</button>
+    </p>
+  }
+
+  @switch (state()) {
+    @case ('loading') {
+      <p role="status">Cargando…</p>
+    }
+    @case ('empty') {
+      <p role="status">No hay datos que mostrar.</p>
+    }
+    @case ('error') {
+      <p role="alert">
+        No se pudo cargar. Vuelve a intentarlo.
+        <button type="button" class="boton" (click)="loadCustomers()">Reintentar</button>
+      </p>
+    }
+    @case ('invalid') {
+      <p role="alert">Revisa los datos marcados.</p>
+    }
+    @case ('session') {
+      <p role="alert">
+        Tu sesión terminó: vuelve a entrar.
+        <a class="boton" [href]="loginHref">Entrar</a>
+      </p>
+    }
+    @case ('data') {
+      <table class="clientes__tabla">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Provincia</th>
+            <th>Población</th>
+            <th>Estado</th>
+            <th><span class="solo-lectores">Acciones</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (customer of customers(); track customer.id) {
+            <tr>
+              <td>{{ customer.name }}</td>
+              <td>{{ customer.email }}</td>
+              <td>{{ customer.provinceName }}</td>
+              <td>{{ customer.townName }}</td>
+              <td>{{ statusLabel(customer.status) }}</td>
+              <td>
+                <a class="boton boton--discreto" [routerLink]="['/clientes', customer.id]" aria-label="Ver detalle" title="Ver detalle">
+                  <span aria-hidden="true">👁</span>
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+      <nav class="clientes__paginacion" aria-label="Paginación">
+        <button type="button" class="boton" [disabled]="page() <= 1" (click)="goToPage(page() - 1)">Anterior</button>
+        <span>Página {{ page() }} de {{ totalPages() }} · {{ total() }} clientes</span>
+        <button type="button" class="boton" [disabled]="page() >= totalPages()" (click)="goToPage(page() + 1)">Siguiente</button>
+      </nav>
+    }
+  }
+</section>
